@@ -260,48 +260,84 @@ def get_svg_icon(name: str, color: str = "currentColor", size: int = 18) -> str:
 
 
 # ==================================================
-# NERI DESIGN SYSTEM CSS (Deep Navy #0B1726 & Industrial Teal #0F766E)
+# NERI DESIGN SYSTEM CSS (Cyber Industrial Blue & Glassmorphism)
 # ==================================================
 
 st.markdown(
     clean_html("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.6);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(14, 165, 233, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+            }
+        }
+
+        @keyframes borderGlow {
+            0% { border-color: rgba(14, 165, 233, 0.2); }
+            50% { border-color: rgba(14, 165, 233, 0.8); }
+            100% { border-color: rgba(14, 165, 233, 0.2); }
+        }
 
         html, body, [class*="css"] {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            color: #14202B;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #0F172A;
             -webkit-font-smoothing: antialiased;
         }
 
+        h1, h2, h3, h4, .neri-card-header {
+            font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif !important;
+        }
+
         .stApp {
-            background-color: #F4F7F8 !important;
+            background: radial-gradient(circle at 50% -20%, #E0F2FE 0%, #F1F5F9 55%, #F8FAFC 100%) !important;
+            background-attachment: fixed !important;
         }
 
         .block-container {
             padding-top: 1.5rem;
             padding-bottom: 3.5rem;
             max-width: 1240px;
+            animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) ease-out;
         }
 
-        /* Streamlit Primary Buttons — Industrial Teal #0F766E */
+        /* Streamlit Primary Buttons — Gradient Cyber Blue #0284C7 -> #06B6D4 */
         div.stButton > button[kind="primary"],
         button[data-testid="baseButton-primary"] {
-            background-color: #0F766E !important;
+            background: linear-gradient(135deg, #0284C7 0%, #06B6D4 100%) !important;
             color: #FFFFFF !important;
-            border-radius: 8px !important;
+            border-radius: 10px !important;
             border: none !important;
-            font-weight: 600 !important;
-            padding: 9px 20px !important;
-            box-shadow: 0 1px 3px rgba(15, 118, 110, 0.25) !important;
-            transition: all 0.15s ease-in-out !important;
+            font-weight: 700 !important;
+            padding: 10px 22px !important;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            letter-spacing: 0.2px;
         }
 
         div.stButton > button[kind="primary"]:hover,
         button[data-testid="baseButton-primary"]:hover {
-            background-color: #0D655E !important;
-            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.35) !important;
-            transform: translateY(-1px);
+            background: linear-gradient(135deg, #0369A1 0%, #0891B2 100%) !important;
+            box-shadow: 0 8px 22px rgba(6, 182, 212, 0.45) !important;
+            transform: translateY(-2px) scale(1.01);
         }
 
         /* Streamlit Form Input Styling */
@@ -309,16 +345,18 @@ st.markdown(
         div[data-baseweb="input"] > div,
         textarea[data-testid="stTextArea"] {
             background-color: #FFFFFF !important;
-            border: 1px solid #D9E2E7 !important;
-            border-radius: 8px !important;
-            color: #14202B !important;
+            border: 1px solid #CBD5E1 !important;
+            border-radius: 10px !important;
+            color: #0F172A !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+            transition: all 0.2s ease-in-out !important;
         }
 
         div[data-baseweb="select"]:focus-within > div,
         div[data-baseweb="input"]:focus-within > div,
         textarea[data-testid="stTextArea"]:focus {
-            border-color: #0F766E !important;
-            box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.15) !important;
+            border-color: #0284C7 !important;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18) !important;
         }
 
         /* STRICT FIXED SIDEBAR SYSTEM (NO FLEXIBLE RESIZING) */
@@ -328,8 +366,8 @@ st.markdown(
             width: 260px !important;
             min-width: 260px !important;
             max-width: 260px !important;
-            background-color: #0B1726 !important;
-            border-right: 1px solid #16263A !important;
+            background: linear-gradient(180deg, #070D15 0%, #0F172A 100%) !important;
+            border-right: 1px solid #1E293B !important;
             box-sizing: border-box !important;
         }
 
@@ -375,7 +413,7 @@ st.markdown(
         section[data-testid="stSidebar"] *, 
         section[data-testid="stSidebar"] .stMarkdown, 
         section[data-testid="stSidebar"] label {
-            color: #F4F7F8 !important;
+            color: #F8FAFC !important;
         }
 
         /* Remove Streamlit default white outlined button boxes in sidebar */
@@ -399,7 +437,7 @@ st.markdown(
             height: 0px !important;
         }
 
-        /* Streamlit Collapsed Sidebar Control (Expand Button when collapsed) */
+        /* Streamlit Collapsed Sidebar Control */
         [data-testid="stSidebarCollapsedControl"],
         button[data-testid="stSidebarCollapsedControl"],
         [data-testid="stSidebarHeaderExpandButton"] {
@@ -412,11 +450,11 @@ st.markdown(
             justify-content: center !important;
             width: 38px !important;
             height: 38px !important;
-            background-color: #0B1726 !important;
-            color: #14B8A6 !important;
-            border: 1px solid #16263A !important;
-            border-radius: 8px !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+            background-color: #0F172A !important;
+            color: #38BDF8 !important;
+            border: 1px solid #1E293B !important;
+            border-radius: 10px !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
             cursor: pointer !important;
             transition: all 0.2s ease !important;
         }
@@ -424,42 +462,33 @@ st.markdown(
         [data-testid="stSidebarCollapsedControl"]:hover,
         button[data-testid="stSidebarCollapsedControl"]:hover,
         [data-testid="stSidebarHeaderExpandButton"]:hover {
-            background-color: #16263A !important;
+            background-color: #1E293B !important;
             color: #FFFFFF !important;
-            border-color: #14B8A6 !important;
+            border-color: #0284C7 !important;
         }
 
-        /* Open Sidebar Collapse Button */
-        section[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"],
-        section[data-testid="stSidebar"] [data-testid="stSidebarHeaderCollapseButton"] {
-            color: #8EA1AE !important;
-            background-color: rgba(22, 38, 58, 0.5) !important;
-            border-radius: 6px !important;
-            border: 1px solid #16263A !important;
-            transition: all 0.2s ease !important;
-        }
-
-        section[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"]:hover,
-        section[data-testid="stSidebar"] [data-testid="stSidebarHeaderCollapseButton"]:hover {
-            color: #FFFFFF !important;
-            background-color: #16263A !important;
-            border-color: #14B8A6 !important;
-        }
-
-        /* Custom Cards & Containers */
+        /* Custom Cards & Containers with Animation & Scale Hover */
         .neri-card {
             background-color: #FFFFFF;
-            border: 1px solid #D9E2E7;
-            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            border-radius: 14px;
             padding: 24px;
             margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(11, 23, 38, 0.04);
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .neri-card:hover {
+            box-shadow: 0 12px 30px -4px rgba(15, 23, 42, 0.1);
+            border-color: #BAE6FD;
+            transform: translateY(-2px);
         }
 
         .neri-card-header {
             font-size: 1.15rem;
             font-weight: 700;
-            color: #14202B;
+            color: #0F172A;
             margin-bottom: 12px;
             display: flex;
             align-items: center;
@@ -469,11 +498,13 @@ st.markdown(
         /* Safety Warning Box (Amber Panel) */
         .warning-box {
             padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #F59E0B;
-            background-color: #FFF7E6;
+            border-radius: 12px;
+            border: 1px solid #FCD34D;
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
             color: #92400E;
             margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.12);
+            animation: fadeInUp 0.4s ease-out;
         }
 
         .warning-box-title {
@@ -489,11 +520,13 @@ st.markdown(
         /* Safety Critical Refusal Box (Red Panel) */
         .critical-box {
             padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #DC2626;
-            background-color: #FEF2F2;
+            border-radius: 12px;
+            border: 1px solid #FCA5A5;
+            background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
             color: #991B1B;
             margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.12);
+            animation: fadeInUp 0.4s ease-out;
         }
 
         .critical-box-title {
@@ -508,28 +541,40 @@ st.markdown(
 
         .success-box {
             padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #16A34A;
-            background-color: #F0FDF4;
+            border-radius: 12px;
+            border: 1px solid #86EFAC;
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
             color: #14532D;
             margin-bottom: 20px;
         }
 
         .source-box {
             padding: 16px;
-            border-radius: 10px;
-            border: 1px solid #D9E2E7;
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
             background-color: #FFFFFF;
             margin-bottom: 12px;
+            transition: all 0.25s ease;
+        }
+
+        .source-box:hover {
+            border-color: #38BDF8;
+            transform: translateX(4px);
         }
 
         .document-box {
             padding: 18px 20px;
-            border-radius: 10px;
-            border: 1px solid #D9E2E7;
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
             background-color: #FFFFFF;
             margin-bottom: 12px;
-            box-shadow: 0 1px 2px rgba(11, 23, 38, 0.03);
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+            transition: all 0.25s ease;
+        }
+
+        .document-box:hover {
+            border-color: #0284C7;
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.08);
         }
 
         /* Numbered Badges & Workflow Steps */
@@ -539,39 +584,45 @@ st.markdown(
             gap: 16px;
             padding: 14px 0;
             border-bottom: 1px solid #F1F5F9;
+            transition: all 0.2s ease;
         }
 
-        .neri-step-item:last-child {
-            border-bottom: none;
+        .neri-step-item:hover {
+            background-color: #F8FAFC;
+            padding-left: 8px;
+            border-radius: 8px;
         }
 
         .neri-badge-num {
-            background-color: #0B1726;
+            background: linear-gradient(135deg, #0F172A 0%, #0284C7 100%);
             color: #FFFFFF;
             font-size: 0.85rem;
-            font-weight: 700;
-            min-width: 34px;
-            height: 34px;
-            border-radius: 8px;
+            font-weight: 800;
+            min-width: 36px;
+            height: 36px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
         }
 
-        /* Scope main content secondary buttons to prevent sidebar override */
+        /* Scope main content secondary buttons */
         section[data-testid="stMain"] .stButton button[kind="secondary"] {
             background-color: #FFFFFF !important;
-            color: #14202B !important;
-            border: 1px solid #D9E2E7 !important;
-            border-radius: 8px !important;
+            color: #0F172A !important;
+            border: 1px solid #CBD5E1 !important;
+            border-radius: 10px !important;
             font-weight: 600 !important;
+            transition: all 0.2s ease !important;
         }
 
         section[data-testid="stMain"] .stButton button[kind="secondary"]:hover {
-            border-color: #0F766E !important;
-            background-color: #F4F7F8 !important;
-            color: #0F766E !important;
+            border-color: #0284C7 !important;
+            background-color: #F0F9FF !important;
+            color: #0284C7 !important;
+            transform: translateY(-1px);
         }
 
         /* Status Pills */
@@ -579,31 +630,46 @@ st.markdown(
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 12px;
+            padding: 4px 14px;
             border-radius: 9999px;
             font-size: 0.775rem;
-            font-weight: 600;
+            font-weight: 700;
             background-color: #F0FDF4;
-            color: #16A34A;
+            color: #15803D;
             border: 1px solid #BBF7D0;
         }
 
         .status-pill.active {
-            background-color: #E6F4F1;
-            color: #0F766E;
-            border: 1px solid #99F6E4;
+            background-color: #F0F9FF;
+            color: #0284C7;
+            border: 1px solid #BAE6FD;
         }
 
         .status-pill.warning {
-            background-color: #FFF7E6;
-            color: #D97706;
+            background-color: #FFFBEB;
+            color: #B45309;
             border: 1px solid #FDE68A;
         }
 
         .status-pill.error {
             background-color: #FEF2F2;
-            color: #DC2626;
+            color: #B91C1C;
             border: 1px solid #FCA5A5;
+        }
+
+        /* Streamlit Expander Styling */
+        .streamlit-expanderHeader {
+            font-weight: 700 !important;
+            border-radius: 10px !important;
+            background-color: #FFFFFF !important;
+            border: 1px solid #E2E8F0 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .streamlit-expanderHeader:hover {
+            border-color: #0284C7 !important;
+            color: #0284C7 !important;
+            background-color: #F0F9FF !important;
         }
     </style>
     """),
@@ -624,9 +690,9 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
             clean_html(f"""
             <div style="display: flex; align-items: center; gap: 24px; margin-top: 8px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    {get_svg_icon("logo", color="#14B8A6", size=26)}
-                    <span style="font-size: 1.35rem; font-weight: 800; color: #0B1726; letter-spacing: -0.5px;">NERI</span>
-                    <span style="font-size: 0.8rem; font-weight: 600; color: #5B7180; border-left: 1px solid #D9E2E7; padding-left: 10px;">Maintenance Intelligence</span>
+                    {get_svg_icon("logo", color="#06B6D4", size=26)}
+                    <span style="font-size: 1.35rem; font-weight: 800; color: #0F172A; letter-spacing: -0.5px;">NERI</span>
+                    <span style="font-size: 0.8rem; font-weight: 600; color: #64748B; border-left: 1px solid #CBD5E1; padding-left: 10px;">Maintenance Intelligence</span>
                 </div>
             </div>
             """),
@@ -644,18 +710,18 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
 
     st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
 
-    # Hero Section Banner (Dark Navy Industrial Theme)
+    # Hero Section Banner (Dark Cyber Industrial Theme)
     st.markdown(
         clean_html(f"""
-        <div style="background-color: #0B1726; border-radius: 16px; padding: 48px 40px; margin-bottom: 40px; border: 1px solid #16263A;">
+        <div style="background: linear-gradient(135deg, #070D15 0%, #0F172A 100%); border-radius: 16px; padding: 48px 40px; margin-bottom: 40px; border: 1px solid #1E293B; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);">
             <div style="max-width: 780px;">
-                <div style="font-size: 0.775rem; font-weight: 700; color: #14B8A6; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
-                    {get_svg_icon("shield-check", color="#14B8A6", size=16)} AI MAINTENANCE INTELLIGENCE
+                <div style="font-size: 0.775rem; font-weight: 700; color: #38BDF8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                    {get_svg_icon("shield-check", color="#06B6D4", size=16)} AI MAINTENANCE INTELLIGENCE
                 </div>
                 <h1 style="font-size: 2.75rem; font-weight: 800; color: #FFFFFF; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 18px;">
-                    Resolve machine problems<br><span style="color: #14B8A6;">with grounded intelligence.</span>
+                    Resolve machine problems<br><span style="background: linear-gradient(135deg, #38BDF8 0%, #06B6D4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">with grounded intelligence.</span>
                 </h1>
-                <p style="font-size: 1.05rem; line-height: 1.6; color: #B8C5CF; margin-bottom: 28px; max-width: 640px;">
+                <p style="font-size: 1.05rem; line-height: 1.6; color: #94A3B8; margin-bottom: 28px; max-width: 640px;">
                     Neri helps maintenance teams troubleshoot industrial equipment using approved machine manuals, maintenance records, and safety procedures.
                 </p>
             </div>
@@ -668,27 +734,27 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     st.markdown(
         clean_html(f"""
         <div style="margin-bottom: 40px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #0F766E; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
                 TECHNICAL DIAGNOSTIC PREVIEW
             </div>
-            <div style="background-color: #FFFFFF; border: 1px solid #D9E2E7; border-radius: 14px; padding: 28px; box-shadow: 0 4px 20px -4px rgba(11, 23, 38, 0.06);">
+            <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 28px; box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.06);">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 16px; margin-bottom: 20px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        {get_svg_icon("wrench", color="#0B1726", size=22)}
+                        {get_svg_icon("wrench", color="#0F172A", size=22)}
                         <div>
-                            <span style="font-weight: 800; font-size: 1.1rem; color: #0B1726;">Hydraulic Press</span>
-                            <span style="font-size: 0.85rem; color: #5B7180; margin-left: 8px; font-weight: 600;">ID: PRS-001</span>
+                            <span style="font-weight: 800; font-size: 1.1rem; color: #0F172A;">Hydraulic Press</span>
+                            <span style="font-size: 0.85rem; color: #64748B; margin-left: 8px; font-weight: 600;">ID: PRS-001</span>
                         </div>
                     </div>
                     <span class="status-pill active">
-                        {get_svg_icon("shield-check", color="#0F766E", size=14)} Grounded in Documentation
+                        {get_svg_icon("shield-check", color="#0284C7", size=14)} Grounded in Documentation
                     </span>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
-                    <div style="background-color: #F4F7F8; border-radius: 10px; padding: 16px; border-left: 4px solid #0F766E;">
-                        <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Observed Problem</div>
-                        <div style="font-size: 0.9rem; font-weight: 700; color: #14202B; margin-top: 4px;">Pressure dropping under load</div>
+                    <div style="background-color: #F0F9FF; border-radius: 10px; padding: 16px; border-left: 4px solid #0284C7;">
+                        <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Observed Problem</div>
+                        <div style="font-size: 0.9rem; font-weight: 700; color: #0F172A; margin-top: 4px;">Pressure dropping under load</div>
                     </div>
 
                     <div style="background-color: #FFF7E6; border-radius: 10px; padding: 16px; border: 1px solid #F59E0B; color: #92400E;">
@@ -700,12 +766,12 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
                         </div>
                     </div>
 
-                    <div style="background-color: #FFFFFF; border: 1px solid #D9E2E7; border-radius: 10px; padding: 16px;">
-                        <div style="font-size: 0.75rem; font-weight: 700; color: #0F766E; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
-                            {get_svg_icon("document", color="#0F766E", size=14)} Source Reference
+                    <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
+                        <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                            {get_svg_icon("document", color="#0284C7", size=14)} Source Reference
                         </div>
-                        <div style="font-size: 0.825rem; color: #14202B; font-weight: 600; margin-top: 4px;">Hydraulic System Manual v2.1</div>
-                        <div style="font-size: 0.75rem; color: #5B7180; margin-top: 2px;">Section 4.2 &bull; Page 34</div>
+                        <div style="font-size: 0.825rem; color: #0F172A; font-weight: 600; margin-top: 4px;">Hydraulic System Manual v2.1</div>
+                        <div style="font-size: 0.75rem; color: #64748B; margin-top: 2px;">Section 4.2 &bull; Page 34</div>
                     </div>
                 </div>
             </div>
@@ -720,10 +786,10 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     with v_col1:
         st.markdown(
             clean_html(f"""
-            <div style="background: #FFFFFF; border: 1px solid #D9E2E7; border-radius: 10px; padding: 20px; height: 100%;">
-                {get_svg_icon("document", color="#0F766E", size=22)}
-                <div style="font-size: 0.95rem; font-weight: 700; color: #0B1726; margin: 10px 0 4px 0;">GROUNDED</div>
-                <div style="font-size: 0.825rem; color: #5B7180; line-height: 1.45;">Answers are based on approved maintenance documentation.</div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
+                {get_svg_icon("document", color="#0284C7", size=22)}
+                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">GROUNDED</div>
+                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Answers are based on approved maintenance documentation.</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -732,10 +798,10 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     with v_col2:
         st.markdown(
             clean_html(f"""
-            <div style="background: #FFFFFF; border: 1px solid #D9E2E7; border-radius: 10px; padding: 20px; height: 100%;">
-                {get_svg_icon("shield-check", color="#0F766E", size=22)}
-                <div style="font-size: 0.95rem; font-weight: 700; color: #0B1726; margin: 10px 0 4px 0;">SAFETY-AWARE</div>
-                <div style="font-size: 0.825rem; color: #5B7180; line-height: 1.45;">Safety procedures remain part of the troubleshooting workflow.</div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
+                {get_svg_icon("shield-check", color="#0284C7", size=22)}
+                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">SAFETY-AWARE</div>
+                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Safety procedures remain part of the troubleshooting workflow.</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -744,10 +810,10 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     with v_col3:
         st.markdown(
             clean_html(f"""
-            <div style="background: #FFFFFF; border: 1px solid #D9E2E7; border-radius: 10px; padding: 20px; height: 100%;">
-                {get_svg_icon("search", color="#0F766E", size=22)}
-                <div style="font-size: 0.95rem; font-weight: 700; color: #0B1726; margin: 10px 0 4px 0;">TRACEABLE</div>
-                <div style="font-size: 0.825rem; color: #5B7180; line-height: 1.45;">Responses are connected to explicit source references.</div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
+                {get_svg_icon("search", color="#0284C7", size=22)}
+                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">TRACEABLE</div>
+                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Responses are connected to explicit source references.</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -756,10 +822,10 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     with v_col4:
         st.markdown(
             clean_html(f"""
-            <div style="background: #FFFFFF; border: 1px solid #D9E2E7; border-radius: 10px; padding: 20px; height: 100%;">
-                {get_svg_icon("factory", color="#0F766E", size=22)}
-                <div style="font-size: 0.95rem; font-weight: 700; color: #0B1726; margin: 10px 0 4px 0;">BUILT FOR MAINTENANCE</div>
-                <div style="font-size: 0.825rem; color: #5B7180; line-height: 1.45;">Designed around real manufacturing troubleshooting workflows.</div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
+                {get_svg_icon("factory", color="#0284C7", size=22)}
+                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">BUILT FOR MAINTENANCE</div>
+                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Designed around real manufacturing troubleshooting workflows.</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -770,11 +836,11 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     # Final Action CTA
     st.markdown(
         clean_html(f"""
-        <div style="background-color: #0B1726; color: #FFFFFF; border-radius: 14px; padding: 40px; text-align: center; margin-bottom: 36px;">
+        <div style="background: linear-gradient(135deg, #070D15 0%, #0F172A 100%); color: #FFFFFF; border-radius: 14px; padding: 40px; text-align: center; margin-bottom: 36px; border: 1px solid #1E293B;">
             <h2 style="font-size: 1.85rem; font-weight: 800; color: #FFFFFF; margin: 0 0 10px 0;">
                 Ready to troubleshoot?
             </h2>
-            <p style="font-size: 0.975rem; color: #B8C5CF; max-width: 540px; margin: 0 auto 24px auto; line-height: 1.5;">
+            <p style="font-size: 0.975rem; color: #94A3B8; max-width: 540px; margin: 0 auto 24px auto; line-height: 1.5;">
                 Sign in to Neri Maintenance Intelligence to begin diagnosing shop floor machinery.
             </p>
         </div>
@@ -793,10 +859,10 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     # Footer
     st.markdown(
         clean_html(f"""
-        <div style="text-align: center; border-top: 1px solid #D9E2E7; padding-top: 24px; margin-top: 48px; color: #5B7180; font-size: 0.825rem;">
+        <div style="text-align: center; border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 48px; color: #64748B; font-size: 0.825rem;">
             <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 6px;">
-                {get_svg_icon("logo", color="#0F766E", size=18)}
-                <strong style="color: #0B1726;">NERI Maintenance Intelligence</strong>
+                {get_svg_icon("logo", color="#0284C7", size=18)}
+                <strong style="color: #0F172A;">NERI Maintenance Intelligence</strong>
             </div>
             Authorized Industrial Operations Platform. Grounded in approved plant documentation.
         </div>
@@ -863,14 +929,14 @@ if not st.session_state["logged_in"]:
             clean_html(f"""
             <div style="text-align: center; margin-bottom: 24px;">
                 <div style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px;">
-                    {get_svg_icon("logo", color="#0F766E", size=32)}
+                    {get_svg_icon("logo", color="#06B6D4", size=32)}
                     <div style="text-align: left;">
-                        <div style="font-size: 1.5rem; font-weight: 800; color: #0B1726; letter-spacing: -0.5px; line-height: 1.1;">NERI</div>
-                        <div style="font-size: 0.775rem; font-weight: 600; color: #0F766E;">Maintenance Intelligence</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #0F172A; letter-spacing: -0.5px; line-height: 1.1;">NERI</div>
+                        <div style="font-size: 0.775rem; font-weight: 600; color: #0284C7;">Maintenance Intelligence</div>
                     </div>
                 </div>
-                <h3 style="font-size: 1.35rem; font-weight: 800; color: #0B1726; margin: 0 0 4px 0;">Welcome back</h3>
-                <div style="font-size: 0.875rem; color: #5B7180;">Sign in to Neri Maintenance Intelligence</div>
+                <h3 style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 0 0 4px 0;">Welcome back</h3>
+                <div style="font-size: 0.875rem; color: #64748B;">Sign in to Neri Maintenance Intelligence</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -880,7 +946,7 @@ if not st.session_state["logged_in"]:
         st.markdown(
             clean_html("""
             <div style="margin-bottom: 8px;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase; letter-spacing: 0.5px;">ACCESS AS</div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">ACCESS AS</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -949,7 +1015,7 @@ if not st.session_state["logged_in"]:
         # 4. Footer inside the Single Card
         st.markdown(
             clean_html("""
-            <div style="text-align: center; font-size: 0.775rem; color: #5B7180; margin-top: 20px;">
+            <div style="text-align: center; font-size: 0.775rem; color: #64748B; margin-top: 20px;">
                 Authorized maintenance personnel
             </div>
             """),
@@ -1006,19 +1072,19 @@ with st.sidebar:
     # 1. Glassmorphism Branding Header
     st.markdown(
         clean_html(f"""
-        <div style="background: rgba(22, 38, 58, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 16px rgba(0,0,0,0.15);">
+        <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: rgba(20, 184, 166, 0.15); border: 1px solid rgba(20, 184, 166, 0.35); border-radius: 10px; padding: 7px; display: flex; align-items: center; justify-content: center;">
-                    {get_svg_icon("logo", color="#14B8A6", size=24)}
+                <div style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.35); border-radius: 10px; padding: 7px; display: flex; align-items: center; justify-content: center;">
+                    {get_svg_icon("logo", color="#06B6D4", size=24)}
                 </div>
                 <div>
                     <div style="font-size: 1.25rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.5px; line-height: 1.1;">NERI</div>
-                    <div style="font-size: 0.7rem; font-weight: 600; color: #14B8A6; margin-top: 2px;">Maintenance AI</div>
+                    <div style="font-size: 0.7rem; font-weight: 600; color: #38BDF8; margin-top: 2px;">Maintenance AI</div>
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 5px; background: rgba(20, 184, 166, 0.12); border: 1px solid rgba(20, 184, 166, 0.25); border-radius: 20px; padding: 3px 8px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #14B8A6; box-shadow: 0 0 6px #14B8A6;"></span>
-                <span style="font-size: 0.65rem; font-weight: 700; color: #14B8A6; letter-spacing: 0.5px;">ONLINE</span>
+            <div style="display: flex; align-items: center; gap: 5px; background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: 20px; padding: 3px 8px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #06B6D4; box-shadow: 0 0 8px #06B6D4; animation: pulseGlow 2s infinite;"></span>
+                <span style="font-size: 0.65rem; font-weight: 700; color: #38BDF8; letter-spacing: 0.5px;">ONLINE</span>
             </div>
         </div>
         """),
@@ -1070,8 +1136,8 @@ with st.sidebar:
     sidebar_css = [
         """
         section[data-testid="stSidebar"] {
-            background-color: #0B1726 !important;
-            border-right: 1px solid #16263A !important;
+            background: linear-gradient(180deg, #070D15 0%, #0F172A 100%) !important;
+            border-right: 1px solid #1E293B !important;
         }
         section[data-testid="stSidebar"] [data-testid="stSidebarNav"] {
             display: none !important;
@@ -1093,7 +1159,7 @@ with st.sidebar:
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
         section[data-testid="stSidebar"] div.stButton > button:hover {
-            background-color: #16263A !important;
+            background-color: #1E293B !important;
             color: #FFFFFF !important;
             transform: translateX(3px) !important;
         }
@@ -1114,11 +1180,11 @@ with st.sidebar:
         section[data-testid="stSidebar"] div#nav_btn_{item} button,
         section[data-testid="stSidebar"] div[id*="nav_btn_{item}"] button,
         section[data-testid="stSidebar"] button[key="nav_btn_{item}"] {{
-            background: {"linear-gradient(90deg, #0F766E 0%, #16263A 100%)" if is_active else "transparent"} !important;
+            background: {"linear-gradient(90deg, rgba(2, 132, 199, 0.25) 0%, rgba(15, 23, 42, 0.6) 100%)" if is_active else "transparent"} !important;
             color: {"#FFFFFF" if is_active else "#94A3B8"} !important;
-            border-left: {"5px solid #14B8A6" if is_active else "5px solid transparent"} !important;
+            border-left: {"5px solid #06B6D4" if is_active else "5px solid transparent"} !important;
             font-weight: {"800" if is_active else "600"} !important;
-            box-shadow: {"0 4px 14px rgba(15, 118, 110, 0.4)" if is_active else "none"} !important;
+            box-shadow: {"0 4px 14px rgba(2, 132, 199, 0.3)" if is_active else "none"} !important;
         }}
         section[data-testid="stSidebar"] div#nav_btn_{item} button:active,
         section[data-testid="stSidebar"] div#nav_btn_{item} button:focus,
@@ -1126,7 +1192,7 @@ with st.sidebar:
         section[data-testid="stSidebar"] div[id*="nav_btn_{item}"] button:focus,
         section[data-testid="stSidebar"] button[key="nav_btn_{item}"]:active,
         section[data-testid="stSidebar"] button[key="nav_btn_{item}"]:focus {{
-            background: #0F766E !important;
+            background: linear-gradient(135deg, #0284C7 0%, #06B6D4 100%) !important;
             color: #FFFFFF !important;
         }}
         section[data-testid="stSidebar"] div#nav_btn_{item} button *,
@@ -1266,17 +1332,17 @@ with st.sidebar:
             st.query_params["role"] = role_slug
 
     # 3. Glassmorphic User Profile Card at Bottom of Sidebar
-    role_badge_color = "#14B8A6" if user_role == "Supervisor" else "#38BDF8"
-    role_badge_bg = "rgba(20, 184, 166, 0.15)" if user_role == "Supervisor" else "rgba(56, 189, 248, 0.15)"
-    role_badge_border = "rgba(20, 184, 166, 0.35)" if user_role == "Supervisor" else "rgba(56, 189, 248, 0.35)"
+    role_badge_color = "#06B6D4" if user_role == "Supervisor" else "#38BDF8"
+    role_badge_bg = "rgba(6, 182, 212, 0.15)" if user_role == "Supervisor" else "rgba(56, 189, 248, 0.15)"
+    role_badge_border = "rgba(6, 182, 212, 0.35)" if user_role == "Supervisor" else "rgba(56, 189, 248, 0.35)"
 
     st.markdown(
         clean_html(f"""
-        <div style="margin-top: 32px; background: rgba(22, 38, 58, 0.85); border: 1px solid rgba(20, 184, 166, 0.25); backdrop-filter: blur(10px); border-radius: 12px; padding: 14px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);">
+        <div style="margin-top: 32px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(6, 182, 212, 0.25); backdrop-filter: blur(10px); border-radius: 12px; padding: 14px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="background: rgba(20, 184, 166, 0.15); border: 1px solid rgba(20, 184, 166, 0.3); padding: 7px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        {get_svg_icon("user", color="#14B8A6", size=18)}
+                    <div style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); padding: 7px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        {get_svg_icon("user", color="#06B6D4", size=18)}
                     </div>
                     <div>
                         <div style="font-size: 0.875rem; font-weight: 700; color: #FFFFFF; line-height: 1.2;">{username}</div>
@@ -1300,13 +1366,13 @@ with st.sidebar:
 # Top Header Bar in Main Layout
 st.markdown(
     clean_html(f"""
-    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #D9E2E7; margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #E2E8F0; margin-bottom: 24px;">
         <div>
-            <span style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase; letter-spacing: 0.5px;">WORKSPACE</span>
-            <h2 style="font-size: 1.6rem; font-weight: 800; color: #0B1726; margin: 0;">{selected_nav}</h2>
+            <span style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">WORKSPACE</span>
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: #0F172A; margin: 0;">{selected_nav}</h2>
         </div>
         <div class="status-pill active">
-            {get_svg_icon("server", color="#0F766E", size=14)} Knowledge Base Active
+            {get_svg_icon("server", color="#0284C7", size=14)} Knowledge Base Active
         </div>
     </div>
     """),
@@ -1321,9 +1387,9 @@ if selected_nav == "Dashboard":
 
     st.markdown(
         clean_html(f"""
-        <div class="neri-card" style="border-left: 4px solid #0F766E;">
-            <h3 style="font-size: 1.25rem; font-weight: 800; color: #0B1726; margin-bottom: 4px;">Welcome back, {username}</h3>
-            <p style="font-size: 0.875rem; color: #5B7180; margin: 0;">
+        <div class="neri-card" style="border-left: 4px solid #0284C7;">
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: #0F172A; margin-bottom: 4px;">Welcome back, {username}</h3>
+            <p style="font-size: 0.875rem; color: #64748B; margin: 0;">
                 Access grounded maintenance intelligence and troubleshooting assistance for plant machinery.
             </p>
         </div>
@@ -1359,11 +1425,11 @@ if selected_nav == "Dashboard":
             clean_html(f"""
             <div class="neri-card" style="height: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Active Machines</span>
-                    {get_svg_icon("wrench", color="#0F766E", size=20)}
+                    <span style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Active Machines</span>
+                    {get_svg_icon("wrench", color="#0284C7", size=20)}
                 </div>
-                <div style="font-size: 2rem; font-weight: 800; color: #0B1726;">{len(unique_machines) if unique_machines else '—'}</div>
-                <div style="font-size: 0.75rem; color: #5B7180; margin-top: 4px;">Registered equipment in history</div>
+                <div style="font-size: 2rem; font-weight: 800; color: #0F172A;">{len(unique_machines) if unique_machines else '—'}</div>
+                <div style="font-size: 0.75rem; color: #64748B; margin-top: 4px;">Registered equipment in history</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -1374,11 +1440,11 @@ if selected_nav == "Dashboard":
             clean_html(f"""
             <div class="neri-card" style="height: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Troubleshooting Sessions</span>
-                    {get_svg_icon("history", color="#0F766E", size=20)}
+                    <span style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Troubleshooting Sessions</span>
+                    {get_svg_icon("history", color="#0284C7", size=20)}
                 </div>
-                <div style="font-size: 2rem; font-weight: 800; color: #0B1726;">{total_sessions_count}</div>
-                <div style="font-size: 0.75rem; color: #5B7180; margin-top: 4px;">Recorded diagnostic queries</div>
+                <div style="font-size: 2rem; font-weight: 800; color: #0F172A;">{total_sessions_count}</div>
+                <div style="font-size: 0.75rem; color: #64748B; margin-top: 4px;">Recorded diagnostic queries</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -1389,11 +1455,11 @@ if selected_nav == "Dashboard":
             clean_html(f"""
             <div class="neri-card" style="height: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Approved Documents</span>
-                    {get_svg_icon("document", color="#0F766E", size=20)}
+                    <span style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Approved Documents</span>
+                    {get_svg_icon("document", color="#0284C7", size=20)}
                 </div>
-                <div style="font-size: 2rem; font-weight: 800; color: #0B1726;">{approved_docs_count}</div>
-                <div style="font-size: 0.75rem; color: #5B7180; margin-top: 4px;">Indexed manuals, logs & safety specs</div>
+                <div style="font-size: 2rem; font-weight: 800; color: #0F172A;">{approved_docs_count}</div>
+                <div style="font-size: 0.75rem; color: #64748B; margin-top: 4px;">Indexed manuals, logs & safety specs</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -1404,10 +1470,10 @@ if selected_nav == "Dashboard":
     # Primary Operational Command Action Panel
     st.markdown(
         clean_html("""
-        <div class="neri-card" style="background: #FFFFFF; border-left: 4px solid #0F766E; margin-top: 8px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #0F766E; text-transform: uppercase; margin-bottom: 4px;">OPERATIONAL COMMAND</div>
-            <h4 style="font-size: 1.15rem; font-weight: 800; color: #0B1726; margin: 0 0 6px 0;">Need to diagnose a machine problem?</h4>
-            <p style="font-size: 0.875rem; color: #5B7180; margin: 0 0 16px 0; line-height: 1.5;">
+        <div class="neri-card" style="background: #FFFFFF; border-left: 4px solid #0284C7; margin-top: 8px;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; margin-bottom: 4px;">OPERATIONAL COMMAND</div>
+            <h4 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 6px 0;">Need to diagnose a machine problem?</h4>
+            <p style="font-size: 0.875rem; color: #64748B; margin: 0 0 16px 0; line-height: 1.5;">
                 Start a grounded troubleshooting session using approved manuals and maintenance documentation.
             </p>
         </div>
@@ -1472,9 +1538,9 @@ elif selected_nav == "Troubleshoot":
     st.markdown(
         clean_html("""
         <div style="margin-bottom: 20px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #0F766E; text-transform: uppercase; letter-spacing: 0.5px;">DIAGNOSTIC WORKSPACE</div>
-            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0B1726; margin: 2px 0 4px 0;">Diagnose a machine problem</h3>
-            <p style="font-size: 0.875rem; color: #5B7180; margin: 0;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px;">DIAGNOSTIC WORKSPACE</div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 2px 0 4px 0;">Diagnose a machine problem</h3>
+            <p style="font-size: 0.875rem; color: #64748B; margin: 0;">
                 Describe the issue and Neri will search approved documentation for grounded guidance.
             </p>
         </div>
@@ -1520,26 +1586,26 @@ elif selected_nav == "Troubleshoot":
                     progress_placeholder = st.empty()
                     progress_placeholder.markdown(
                         clean_html(f"""
-                        <div class="neri-card" style="border-left: 4px solid #0F766E; padding: 20px;">
-                            <div style="font-weight: 700; font-size: 1rem; color: #0B1726; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                                {get_svg_icon("cpu", color="#0F766E", size=20)} 
+                        <div class="neri-card" style="border-left: 4px solid #0284C7; padding: 20px;">
+                            <div style="font-weight: 700; font-size: 1rem; color: #0F172A; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                                {get_svg_icon("cpu", color="#0284C7", size=20)} 
                                 <span>Neri Diagnostic Pipeline Active</span>
                             </div>
-                            <div style="font-size: 0.875rem; color: #5B7180; line-height: 1.8; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="font-size: 0.875rem; color: #64748B; line-height: 1.8; display: flex; flex-direction: column; gap: 6px;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("search", color="#0F766E", size=14)} <span>Understanding problem & symptoms...</span>
+                                    {get_svg_icon("search", color="#0284C7", size=14)} <span>Understanding problem & symptoms...</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("document", color="#0F766E", size=14)} <span>Searching approved documentation...</span>
+                                    {get_svg_icon("document", color="#0284C7", size=14)} <span>Searching approved documentation...</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("history", color="#0F766E", size=14)} <span>Checking maintenance records...</span>
+                                    {get_svg_icon("history", color="#0284C7", size=14)} <span>Checking maintenance records...</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("shield", color="#0F766E", size=14)} <span>Checking safety procedures...</span>
+                                    {get_svg_icon("shield", color="#0284C7", size=14)} <span>Checking safety procedures...</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("check", color="#14B8A6", size=14)} <strong style="color: #0B1726;">Preparing troubleshooting guidance...</strong>
+                                    {get_svg_icon("check", color="#06B6D4", size=14)} <strong style="color: #0F172A;">Preparing troubleshooting guidance...</strong>
                                 </div>
                             </div>
                         </div>
@@ -1566,15 +1632,15 @@ elif selected_nav == "Troubleshoot":
     with tb_right:
         st.markdown(
             clean_html(f"""
-            <div style="background: #FFFFFF; border: 1px solid #D9E2E7; border-radius: 12px; padding: 20px;">
-                <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; color: #0B1726; margin-bottom: 12px;">
-                    {get_svg_icon("shield-check", color="#0F766E", size=18)} Safety First & Tips
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; color: #0F172A; margin-bottom: 12px;">
+                    {get_svg_icon("shield-check", color="#0284C7", size=18)} Safety First & Tips
                 </div>
-                <div style="font-size: 0.825rem; color: #5B7180; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
+                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
                     <div><strong>1. Machine Identification:</strong> Include exact machine name and plant ID for precise retrieval.</div>
                     <div><strong>2. Detailed Symptoms:</strong> Mention leaks, noise type, temperature readings, or pressure drops.</div>
                     <div><strong>3. Error Codes:</strong> Enter control panel error codes if available (e.g. E-402).</div>
-                    <div style="background: #FFF7E6; padding: 10px; border-radius: 8px; border: 1px solid #F59E0B; color: #92400E; margin-top: 4px;">
+                    <div style="background: #FFFBEB; padding: 10px; border-radius: 8px; border: 1px solid #FCD34D; color: #92400E; margin-top: 4px;">
                         <strong>Plant Safety Notice:</strong> Follow LOTO requirements before inspecting electrical or pressure components.
                     </div>
                 </div>
@@ -1620,14 +1686,14 @@ elif selected_nav == "Troubleshoot":
                 # NO RELIABLE ANSWER STATE
                 st.markdown(
                     clean_html(f"""
-                    <div class="neri-card" style="border-left: 4px solid #0F766E; background: #FFFFFF; padding: 24px;">
-                        <div style="display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 700; color: #0B1726; margin-bottom: 8px;">
-                            {get_svg_icon("document", color="#0F766E", size=22)} No reliable answer found
+                    <div class="neri-card" style="border-left: 4px solid #0284C7; background: #FFFFFF; padding: 24px;">
+                        <div style="display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 700; color: #0F172A; margin-bottom: 8px;">
+                            {get_svg_icon("document", color="#0284C7", size=22)} No reliable answer found
                         </div>
-                        <div style="font-size: 0.9rem; color: #5B7180; line-height: 1.6; margin-bottom: 12px;">
+                        <div style="font-size: 0.9rem; color: #64748B; line-height: 1.6; margin-bottom: 12px;">
                             {message_text}
                         </div>
-                        <div style="font-size: 0.825rem; color: #0F766E; background: #E6F4F1; padding: 10px; border-radius: 6px; font-weight: 500;">
+                        <div style="font-size: 0.825rem; color: #0284C7; background: #F0F9FF; padding: 10px; border-radius: 6px; font-weight: 500;">
                             Try describing the machine symptoms differently or check whether the required documentation is available in the Knowledge Base.
                         </div>
                     </div>
@@ -1642,27 +1708,27 @@ elif selected_nav == "Troubleshoot":
             prob_txt = result.get("problem") or input_data.get("problem", "N/A")
             err_code = result.get("error_code") or input_data.get("error_code")
 
-            err_code_badge = f'<span style="background: #F1F5F9; color: #5B7180; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Code: {err_code}</span>' if err_code else ''
+            err_code_badge = f'<span style="background: #F1F5F9; color: #64748B; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Code: {err_code}</span>' if err_code else ''
 
             st.markdown(
                 clean_html(f"""
                 <div class="neri-card" style="margin-bottom: 16px; padding: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
                         <div>
-                            <div style="font-size: 0.75rem; font-weight: 700; color: #0F766E; text-transform: uppercase; letter-spacing: 0.5px;">DIAGNOSTIC REPORT</div>
-                            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0B1726; margin: 4px 0 10px 0;">Troubleshooting Guidance</h3>
-                            <div style="font-size: 0.95rem; font-weight: 700; color: #0B1726; display: flex; align-items: center; gap: 8px;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px;">DIAGNOSTIC REPORT</div>
+                            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 4px 0 10px 0;">Troubleshooting Guidance</h3>
+                            <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 8px;">
                                 <span>{m_name}</span>
-                                <span style="color: #D9E2E7;">•</span>
-                                <span style="color: #5B7180;">ID: {m_id}</span>
+                                <span style="color: #CBD5E1;">•</span>
+                                <span style="color: #64748B;">ID: {m_id}</span>
                                 {err_code_badge}
                             </div>
-                            <div style="font-size: 0.875rem; color: #5B7180; margin-top: 6px; line-height: 1.4;">
-                                <strong style="color: #0B1726;">Problem:</strong> {prob_txt}
+                            <div style="font-size: 0.875rem; color: #64748B; margin-top: 6px; line-height: 1.4;">
+                                <strong style="color: #0F172A;">Problem:</strong> {prob_txt}
                             </div>
                         </div>
                         <span class="status-pill active" style="flex-shrink: 0;">
-                            {get_svg_icon("shield-check", color="#0F766E", size=14)} Grounded in Documentation
+                            {get_svg_icon("shield-check", color="#0284C7", size=14)} Grounded in Documentation
                         </span>
                     </div>
                 </div>
@@ -1698,18 +1764,18 @@ elif selected_nav == "Troubleshoot":
                     causes_html.append(f"""
                     <div class="neri-step-item">
                         <div class="neri-badge-num">0{idx}</div>
-                        <div style="font-size: 0.9rem; font-weight: 600; color: #0B1726; margin-top: 4px;">{cause_str}</div>
+                        <div style="font-size: 0.9rem; font-weight: 600; color: #0F172A; margin-top: 4px;">{cause_str}</div>
                     </div>
                     """)
                 causes_body = "".join(causes_html)
             else:
-                causes_body = '<div style="font-size: 0.875rem; color: #5B7180; padding: 12px 0;">No documented causes found.</div>'
+                causes_body = '<div style="font-size: 0.875rem; color: #64748B; padding: 12px 0;">No documented causes found.</div>'
 
             st.markdown(
                 clean_html(f"""
                 <div class="neri-card" style="margin-bottom: 16px;">
                     <div class="neri-card-header" style="border-bottom: 1px solid #F1F5F9; padding-bottom: 12px; margin-bottom: 8px;">
-                        {get_svg_icon("search", color="#0B1726", size=18)} Possible Causes
+                        {get_svg_icon("search", color="#0F172A", size=18)} Possible Causes
                     </div>
                     {causes_body}
                 </div>
@@ -1726,18 +1792,18 @@ elif selected_nav == "Troubleshoot":
                     steps_html.append(f"""
                     <div class="neri-step-item">
                         <div class="neri-badge-num">0{idx}</div>
-                        <div style="font-size: 0.9rem; color: #0B1726; line-height: 1.5; margin-top: 4px;">{step_str}</div>
+                        <div style="font-size: 0.9rem; color: #0F172A; line-height: 1.5; margin-top: 4px;">{step_str}</div>
                     </div>
                     """)
                 steps_body = "".join(steps_html)
             else:
-                steps_body = '<div style="font-size: 0.875rem; color: #5B7180; padding: 12px 0;">No documented troubleshooting steps found.</div>'
+                steps_body = '<div style="font-size: 0.875rem; color: #64748B; padding: 12px 0;">No documented troubleshooting steps found.</div>'
 
             st.markdown(
                 clean_html(f"""
                 <div class="neri-card" style="margin-bottom: 16px;">
                     <div class="neri-card-header" style="border-bottom: 1px solid #F1F5F9; padding-bottom: 12px; margin-bottom: 8px;">
-                        {get_svg_icon("wrench", color="#0B1726", size=18)} Recommended Troubleshooting Steps
+                        {get_svg_icon("wrench", color="#0F172A", size=18)} Recommended Troubleshooting Steps
                     </div>
                     {steps_body}
                 </div>
@@ -1789,30 +1855,30 @@ elif selected_nav == "Troubleshoot":
 
                     src_cards_html.append(f"""
                     <div class="source-box" style="margin-bottom: 10px;">
-                        <div style="font-weight: 700; font-size: 0.9rem; color: #0B1726; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="font-weight: 700; font-size: 0.9rem; color: #0F172A; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                {get_svg_icon("file-text", color="#0F766E", size=18)}
+                                {get_svg_icon("file-text", color="#0284C7", size=18)}
                                 <span>{doc_name}</span>
                             </div>
-                            <span style="font-size: 0.725rem; font-weight: 700; color: #0F766E; background: #E6F4F1; padding: 2px 8px; border-radius: 4px;">{doc_type_str}</span>
+                            <span style="font-size: 0.725rem; font-weight: 700; color: #0284C7; background: #F0F9FF; padding: 2px 8px; border-radius: 4px;">{doc_type_str}</span>
                         </div>
-                        <div style="font-size: 0.8rem; color: #5B7180; display: flex; gap: 16px;">
+                        <div style="font-size: 0.8rem; color: #64748B; display: flex; gap: 16px;">
                             <span>{sec_val}</span>
                             <span>{pg_val}</span>
-                            <span style="color: #0F766E; font-weight: 600;">{count_str}</span>
+                            <span style="color: #0284C7; font-weight: 600;">{count_str}</span>
                         </div>
                     </div>
                     """)
                 
                 sources_body = "".join(src_cards_html)
             else:
-                sources_body = '<div style="font-size: 0.875rem; color: #5B7180; padding: 12px 0;">No source references available.</div>'
+                sources_body = '<div style="font-size: 0.875rem; color: #64748B; padding: 12px 0;">No source references available.</div>'
 
             st.markdown(
                 clean_html(f"""
                 <div class="neri-card" style="margin-top: 16px; margin-bottom: 16px; padding: 20px;">
                     <div class="neri-card-header" style="border-bottom: 1px solid #F1F5F9; padding-bottom: 12px; margin-bottom: 12px;">
-                        {get_svg_icon("document", color="#0B1726", size=18)} Source References
+                        {get_svg_icon("document", color="#0F172A", size=18)} Source References
                     </div>
                     {sources_body}
                 </div>
@@ -1824,7 +1890,7 @@ elif selected_nav == "Troubleshoot":
             st.markdown(
                 clean_html("""
                 <div class="neri-card" style="margin-bottom: 12px; padding: 20px;">
-                    <div style="font-size: 0.95rem; font-weight: 700; color: #0B1726; margin-bottom: 12px;">
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin-bottom: 12px;">
                         Was this troubleshooting guidance helpful?
                     </div>
                 """),
@@ -1872,9 +1938,9 @@ elif selected_nav == "History":
     st.markdown(
         clean_html("""
         <div style="margin-bottom: 20px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #0F766E; text-transform: uppercase; letter-spacing: 0.5px;">CASE ARCHIVE</div>
-            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0B1726; margin: 2px 0 4px 0;">Troubleshooting Case History</h3>
-            <p style="font-size: 0.875rem; color: #5B7180; margin: 0;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px;">CASE ARCHIVE</div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 2px 0 4px 0;">Troubleshooting Case History</h3>
+            <p style="font-size: 0.875rem; color: #64748B; margin: 0;">
                 Review previous diagnostic sessions and archived technical reports.
             </p>
         </div>
@@ -1892,22 +1958,22 @@ elif selected_nav == "History":
         with hk_col1:
             st.markdown(clean_html(f"""
             <div class="neri-card" style="padding: 16px; height: 100%;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Total Sessions</div>
-                <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{total_sessions}</div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Total Sessions</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0F172A; margin-top: 4px;">{total_sessions}</div>
             </div>
             """), unsafe_allow_html=True)
         with hk_col2:
             st.markdown(clean_html(f"""
             <div class="neri-card" style="padding: 16px; height: 100%;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Helpful Feedback</div>
-                <div style="font-size: 1.75rem; font-weight: 800; color: #0F766E; margin-top: 4px;">{helpful_sessions}</div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Helpful Feedback</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0284C7; margin-top: 4px;">{helpful_sessions}</div>
             </div>
             """), unsafe_allow_html=True)
         with hk_col3:
             st.markdown(clean_html(f"""
             <div class="neri-card" style="padding: 16px; height: 100%;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Unique Equipment</div>
-                <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{unique_machines_count}</div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Unique Equipment</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0F172A; margin-top: 4px;">{unique_machines_count}</div>
             </div>
             """), unsafe_allow_html=True)
 
@@ -1937,7 +2003,7 @@ elif selected_nav == "History":
                 with st.expander(exp_label):
                     st.markdown(
                         clean_html(f"""
-                        <div style="font-size: 0.875rem; color: #14202B; line-height: 1.6; margin-bottom: 12px;">
+                        <div style="font-size: 0.875rem; color: #0F172A; line-height: 1.6; margin-bottom: 12px;">
                             <strong>Date/Time:</strong> {dt}<br>
                             <strong>Machine:</strong> {m_name} ({m_id})<br>
                             <strong>Problem:</strong> {prob}<br>
@@ -1970,11 +2036,11 @@ elif selected_nav == "History":
 
         st.markdown(
             clean_html(f"""
-            <div class="neri-card" style="border-left: 4px solid #0F766E;">
+            <div class="neri-card" style="border-left: 4px solid #0284C7;">
                 <div class="neri-card-header">
-                    {get_svg_icon("document", color="#0F766E", size=20)} Archived Diagnostic Case Report
+                    {get_svg_icon("document", color="#0284C7", size=20)} Archived Diagnostic Case Report
                 </div>
-                <div style="font-size: 0.875rem; color: #14202B; line-height: 1.6;">
+                <div style="font-size: 0.875rem; color: #0F172A; line-height: 1.6;">
                     <strong>Machine:</strong> {det.get('machine')}<br>
                     <strong>Machine ID:</strong> {det.get('machine_id')}<br>
                     <strong>Problem:</strong> {det.get('problem')}<br>
@@ -1997,14 +2063,14 @@ elif selected_nav == "History":
                 causes_markup.append(f"""
                 <div class="neri-step-item">
                     <div class="neri-badge-num">0{idx}</div>
-                    <div style="font-size: 0.875rem; font-weight: 600; color: #0B1726; margin-top: 4px;">{c_str}</div>
+                    <div style="font-size: 0.875rem; font-weight: 600; color: #0F172A; margin-top: 4px;">{c_str}</div>
                 </div>
                 """)
 
             st.markdown(
                 clean_html(f"""
                 <div class="neri-card">
-                    <div class="neri-card-header">{get_svg_icon("search", color="#0B1726", size=18)} Archived Causes</div>
+                    <div class="neri-card-header">{get_svg_icon("search", color="#0F172A", size=18)} Archived Causes</div>
                     {''.join(causes_markup)}
                 </div>
                 """),
@@ -2019,14 +2085,14 @@ elif selected_nav == "History":
                 steps_markup.append(f"""
                 <div class="neri-step-item">
                     <div class="neri-badge-num">0{idx}</div>
-                    <div style="font-size: 0.875rem; color: #0B1726; line-height: 1.5; margin-top: 4px;">{s_str}</div>
+                    <div style="font-size: 0.875rem; color: #0F172A; line-height: 1.5; margin-top: 4px;">{s_str}</div>
                 </div>
                 """)
 
             st.markdown(
                 clean_html(f"""
                 <div class="neri-card">
-                    <div class="neri-card-header">{get_svg_icon("wrench", color="#0B1726", size=18)} Archived Steps</div>
+                    <div class="neri-card-header">{get_svg_icon("wrench", color="#0F172A", size=18)} Archived Steps</div>
                     {''.join(steps_markup)}
                 </div>
                 """),
@@ -2047,9 +2113,9 @@ elif selected_nav == "Documents":
     st.markdown(
         clean_html("""
         <div style="margin-bottom: 20px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #0F766E; text-transform: uppercase; letter-spacing: 0.5px;">KNOWLEDGE BASE CENTER</div>
-            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0B1726; margin: 2px 0 4px 0;">Approved Documentation Management</h3>
-            <p style="font-size: 0.875rem; color: #5B7180; margin: 0;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px;">KNOWLEDGE BASE CENTER</div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 2px 0 4px 0;">Approved Documentation Management</h3>
+            <p style="font-size: 0.875rem; color: #64748B; margin: 0;">
                 Manage approved manuals, maintenance logs, and safety procedures used by Neri.
             </p>
         </div>
@@ -2069,28 +2135,28 @@ elif selected_nav == "Documents":
         with dk_col1:
             st.markdown(clean_html(f"""
             <div class="neri-card" style="padding: 16px; height: 100%;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Total Documents</div>
-                <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{total_docs}</div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Total Documents</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0F172A; margin-top: 4px;">{total_docs}</div>
             </div>
             """), unsafe_allow_html=True)
         with dk_col2:
             st.markdown(clean_html(f"""
             <div class="neri-card" style="padding: 16px; height: 100%;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Manuals</div>
-                <div style="font-size: 1.75rem; font-weight: 800; color: #0F766E; margin-top: 4px;">{manuals_count}</div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Manuals</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0284C7; margin-top: 4px;">{manuals_count}</div>
             </div>
             """), unsafe_allow_html=True)
         with dk_col3:
             st.markdown(clean_html(f"""
             <div class="neri-card" style="padding: 16px; height: 100%;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Logs</div>
-                <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{logs_count}</div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Logs</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0F172A; margin-top: 4px;">{logs_count}</div>
             </div>
             """), unsafe_allow_html=True)
         with dk_col4:
             st.markdown(clean_html(f"""
             <div class="neri-card" style="padding: 16px; height: 100%;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Safety Specs</div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Safety Specs</div>
                 <div style="font-size: 1.75rem; font-weight: 800; color: #D97706; margin-top: 4px;">{safety_count}</div>
             </div>
             """), unsafe_allow_html=True)
@@ -2201,20 +2267,20 @@ elif selected_nav == "Documents":
                         clean_html(f"""
                         <div class="document-box" style="margin-bottom: 12px; background: #FFFFFF;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <div style="font-weight: 700; font-size: 1rem; color: #0B1726; display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("file-text", color="#0F766E", size=20)} {fname}
+                                <div style="font-weight: 700; font-size: 1rem; color: #0F172A; display: flex; align-items: center; gap: 8px;">
+                                    {get_svg_icon("file-text", color="#0284C7", size=20)} {fname}
                                 </div>
                                 {st_pill}
                             </div>
-                            <div style="font-size: 0.825rem; color: #5B7180; line-height: 1.5;">
+                            <div style="font-size: 0.825rem; color: #64748B; line-height: 1.5;">
                                 <strong>Type:</strong> {doc_type} &bull; 
                                 <strong>Machine:</strong> {machine} &bull; 
                                 <strong>Version:</strong> {version} &bull; 
                                 <strong>Chunks:</strong> {chunks}
                             </div>
                         </div>
-                        <div style="font-size: 0.75rem; font-weight: 700; color: #0F766E; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                            {get_svg_icon("document", color="#0F766E", size=14)} DOCUMENT CONTENT PREVIEW
+                        <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                            {get_svg_icon("document", color="#0284C7", size=14)} DOCUMENT CONTENT PREVIEW
                         </div>
                         """),
                         unsafe_allow_html=True
@@ -2224,7 +2290,7 @@ elif selected_nav == "Documents":
 
                     st.markdown(
                         clean_html(f"""
-                        <div style="background: #0B1726; color: #E2E8F0; border-radius: 8px; padding: 18px; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.85rem; line-height: 1.6; max-height: 420px; overflow-y: auto; white-space: pre-wrap; border: 1px solid #16263A;">
+                        <div style="background: #0F172A; color: #E2E8F0; border-radius: 8px; padding: 18px; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.85rem; line-height: 1.6; max-height: 420px; overflow-y: auto; white-space: pre-wrap; border: 1px solid #1E293B;">
 {doc_text}
                         </div>
                         """),
