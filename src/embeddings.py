@@ -3,19 +3,20 @@ import time
 from openai import OpenAI, RateLimitError
 
 from src.config import (
-    OPENAI_API_KEY,
     OPENAI_BASE_URL,
     EMBED_MODEL,
+    get_openai_api_key,
     validate_config,
 )
 
 
-validate_config()
-
-client = OpenAI(
-    api_key=OPENAI_API_KEY,
-    base_url=OPENAI_BASE_URL,
-)
+def _get_client():
+    validate_config()
+    api_key = get_openai_api_key()
+    return OpenAI(
+        api_key=api_key,
+        base_url=OPENAI_BASE_URL,
+    )
 
 
 def create_embedding(text: str) -> list[float]:
@@ -33,7 +34,7 @@ def create_embedding(text: str) -> list[float]:
     for attempt in range(max_retries):
 
         try:
-            response = client.embeddings.create(
+            response = _get_client().embeddings.create(
                 model=EMBED_MODEL,
                 input=text,
             )
@@ -98,8 +99,7 @@ def create_embeddings(
         for attempt in range(max_retries):
 
             try:
-
-                response = client.embeddings.create(
+                response = _get_client().embeddings.create(
                     model=EMBED_MODEL,
                     input=batch,
                 )

@@ -21,7 +21,18 @@ SAFETY_DIR = DATA_DIR / "safety"
 UPLOAD_DIR = BASE_DIR / "uploads"
 
 # Gemini / OpenAI-compatible API
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+def get_openai_api_key():
+    key = os.getenv("OPENAI_API_KEY")
+    if not key:
+        try:
+            import streamlit as st
+            key = st.secrets.get("OPENAI_API_KEY")
+        except Exception:
+            pass
+    return key
+
+
+OPENAI_API_KEY = get_openai_api_key()
 
 OPENAI_BASE_URL = os.getenv(
     "OPENAI_BASE_URL",
@@ -77,10 +88,11 @@ MODEL_OUTPUT_COST_PER_1K = float(
 def validate_config():
     """Validate required Neri configuration."""
 
-    if not OPENAI_API_KEY:
+    key = get_openai_api_key()
+    if not key:
         raise ValueError(
             "OPENAI_API_KEY is missing. "
-            "Add it to your .env file."
+            "Add it to your .env file or Streamlit secrets."
         )
 
     return True

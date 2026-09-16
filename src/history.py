@@ -381,3 +381,85 @@ def get_documents(
     connection.close()
 
     return [dict(row) for row in rows]
+
+
+def auto_seed_if_empty():
+    """
+    Check if the documents table or knowledge base is empty.
+    If empty or if files in data/ are not indexed, automatically index all files under data/.
+    """
+    initialize_database()
+    existing_documents = get_documents(limit=1000)
+    indexed_filenames = {
+        doc["filename"]
+        for doc in existing_documents
+        if doc.get("status") == "indexed"
+    }
+
+    dirs = [
+        (BASE_DIR / "data" / "manuals", "manual"),
+        (BASE_DIR / "data" / "maintenance_logs", "maintenance_log"),
+        (BASE_DIR / "data" / "safety", "safety"),
+    ]
+
+    needed_files = []
+    for dir_path, doc_type in dirs:
+        if dir_path.exists():
+            for file_path in dir_path.glob("*.txt"):
+                if file_path.name not in indexed_filenames:
+                    needed_files.append((file_path, doc_type))
+
+    if not needed_files:
+        return
+
+    print(
+        f"Auto-seeding {len(needed_files)} missing data files into knowledge base..."
+    )
+
+    from src.ingestion import create_chunks
+    from src.vector_store import add_documents
+
+    for file_path, doc_type in needed_files:
+        base_stem = file_path.stem
+        for suffix in ["_manual", "_maintenance", "_safety"]:
+            if base_stem.endswith(suffix):
+                base_stem = base_stem[:-len(suffix)]
+        machine_name = " ".join(
+            [w.capitalize() for w in base_stem.split("_")]
+        )
+
+        chunks = create_chunks(
+            file_path=file_path,
+            document_type=doc_type,
+            machine=machine_name,
+            version="1.0",
+            owner="Maintenance Department",
+        )
+
+        if not chunks:
+            continue
+
+        try:
+            from src.embeddings import create_embeddings
+            embeddings = create_embeddings(
+                [c["text"] for c in chunks],
+                batch_size=20,
+            )
+            add_documents(
+                chunks=chunks,
+                embeddings=embeddings,
+            )
+        except Exception as err:
+            print(
+                f"Warning: Embeddings creation skipped for {file_path.name}: {err}"
+            )
+
+        save_document(
+            filename=file_path.name,
+            document_type=doc_type,
+            machine=machine_name,
+            version="1.0",
+            owner="Maintenance Department",
+            chunks=len(chunks),
+            status="indexed",
+        )

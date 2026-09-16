@@ -14,6 +14,141 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.config import RAG_API_URL
+from src.history import auto_seed_if_empty
+
+# Ensure all files under data/ are automatically seeded & indexed on startup
+try:
+    auto_seed_if_empty()
+except Exception as e:
+    print(f"Auto-seed note: {e}")
+
+# Helper functions for API calls with direct Python fallback (Streamlit Cloud support)
+def fetch_history_sessions():
+    try:
+        resp = requests.get(f"{RAG_API_URL}/history", timeout=2)
+        if resp.status_code == 200:
+            return resp.json().get("sessions", [])
+    except Exception:
+        pass
+    from src.history import get_history
+    return get_history()
+
+def fetch_documents_list():
+    try:
+        resp = requests.get(f"{RAG_API_URL}/documents", timeout=2)
+        if resp.status_code == 200:
+            return resp.json().get("documents", [])
+    except Exception:
+        pass
+    from src.history import get_documents
+    return get_documents()
+
+def fetch_session_detail(session_id: int):
+    try:
+        resp = requests.get(f"{RAG_API_URL}/history/{session_id}", timeout=2)
+        if resp.status_code == 200:
+            return resp.json()
+    except Exception:
+        pass
+    from src.history import get_session
+    return get_session(session_id)
+
+def post_feedback(session_id: int, feedback: str, comment: str = None):
+    try:
+        resp = requests.post(
+            f"{RAG_API_URL}/history/{session_id}/feedback",
+            json={"feedback": feedback, "comment": comment},
+            timeout=2
+        )
+        if resp.status_code == 200:
+            return True
+    except Exception:
+        pass
+    from src.history import save_feedback
+    return save_feedback(session_id=session_id, feedback=feedback, feedback_comment=comment)
+
+def post_troubleshoot_query(payload: dict):
+    try:
+        resp = requests.post(f"{RAG_API_URL}/query", json=payload, timeout=60)
+        if resp.status_code == 200:
+            return resp.json()
+    except Exception:
+        pass
+    from src.pipeline import troubleshoot
+    from src.history import save_session
+    response = troubleshoot(
+        machine=payload["machine"],
+        machine_id=payload["machine_id"],
+        problem=payload["problem"],
+        error_code=payload.get("error_code")
+    )
+    session_id = save_session(
+        machine=payload["machine"],
+        machine_id=payload["machine_id"],
+        problem=payload["problem"],
+        error_code=payload.get("error_code"),
+        response=response
+    )
+    response["session_id"] = session_id
+    return response
+
+def post_document_upload(file_name: str, file_bytes: bytes, document_type: str, machine: str = None, version: str = None, owner: str = None):
+    try:
+        files = {"file": (file_name, file_bytes)}
+        data = {
+            "document_type": document_type,
+            "machine": machine,
+            "version": version,
+            "owner": owner
+        }
+        res = requests.post(f"{RAG_API_URL}/documents/upload", files=files, data=data, timeout=120)
+        if res.status_code == 200:
+            return res.json()
+    except Exception:
+        pass
+    
+    from src.config import UPLOAD_DIR
+    from src.ingestion import create_chunks
+    from src.embeddings import create_embeddings
+    from src.vector_store import add_documents
+    from src.history import save_document
+
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    file_path = UPLOAD_DIR / Path(file_name).name
+    file_path.write_bytes(file_bytes)
+
+    chunks = create_chunks(
+        file_path,
+        document_type=document_type,
+        machine=machine,
+        version=version,
+        owner=owner,
+    )
+    if not chunks:
+        raise ValueError("No readable text was found in the document.")
+
+    embeddings = create_embeddings([c["text"] for c in chunks])
+    add_documents(chunks=chunks, embeddings=embeddings)
+    save_document(
+        filename=file_name,
+        document_type=document_type,
+        machine=machine,
+        version=version,
+        owner=owner,
+        chunks=len(chunks),
+        status="indexed",
+    )
+    return {
+        "success": True,
+        "message": "Document uploaded and indexed successfully.",
+        "document": file_name,
+        "document_type": document_type,
+        "machine": machine,
+        "version": version,
+        "owner": owner,
+        "chunks": len(chunks),
+        "status": "indexed",
+    }
 
 def clean_html(html_str: str) -> str:
     """Removes leading and trailing whitespace from each line to prevent Streamlit Markdown from treating HTML as code blocks."""
@@ -1186,27 +1321,23 @@ if selected_nav == "Dashboard":
         unsafe_allow_html=True
     )
 
-    # Fetch stats from existing database endpoints
+    # Fetch stats using unified helpers (supports Streamlit Cloud direct access)
     total_sessions_count = 0
     approved_docs_count = 0
     unique_machines = set()
 
     try:
-        hist_resp = requests.get(f"{RAG_API_URL}/history", timeout=5)
-        if hist_resp.status_code == 200:
-            sessions = hist_resp.json().get("sessions", [])
-            total_sessions_count = len(sessions)
-            for s in sessions:
-                if s.get("machine"):
-                    unique_machines.add(s.get("machine"))
+        sessions = fetch_history_sessions()
+        total_sessions_count = len(sessions)
+        for s in sessions:
+            if s.get("machine"):
+                unique_machines.add(s.get("machine"))
     except Exception:
         pass
 
     try:
-        doc_resp = requests.get(f"{RAG_API_URL}/documents", timeout=5)
-        if doc_resp.status_code == 200:
-            docs = doc_resp.json().get("documents", [])
-            approved_docs_count = len(docs)
+        docs = fetch_documents_list()
+        approved_docs_count = len(docs)
     except Exception:
         pass
 
@@ -1288,12 +1419,10 @@ if selected_nav == "Dashboard":
     )
 
     try:
-        hist_resp = requests.get(f"{RAG_API_URL}/history", timeout=5)
-        if hist_resp.status_code == 200:
-            recent_sessions = hist_resp.json().get("sessions", [])[:5]
-            if not recent_sessions:
-                st.info("No recent troubleshooting sessions recorded.")
-            else:
+        recent_sessions = fetch_history_sessions()[:5]
+        if not recent_sessions:
+            st.info("No recent troubleshooting sessions recorded.")
+        else:
                 for s in recent_sessions:
                     m_name = s.get("machine", "Unknown Machine")
                     m_id = s.get("machine_id", "N/A")
@@ -1409,20 +1538,20 @@ elif selected_nav == "Troubleshoot":
                     )
 
                     try:
-                        response = requests.post(f"{RAG_API_URL}/query", json=payload, timeout=60)
+                        res_json = post_troubleshoot_query(payload)
                         progress_placeholder.empty()
 
-                        if response.status_code != 200:
+                        if not res_json:
                             st.error("Neri could not process the troubleshooting request.")
                         else:
-                            st.session_state["troubleshooting_result"] = response.json()
+                            st.session_state["troubleshooting_result"] = res_json
                             st.session_state["troubleshooting_input"] = payload
                             st.session_state["show_feedback_comment"] = False
                             st.rerun()
 
-                    except requests.RequestException:
+                    except Exception as error:
                         progress_placeholder.empty()
-                        st.error("Could not connect to the Neri API backend. Please make sure FastAPI server is running.")
+                        st.error(f"Could not process troubleshooting request: {error}")
 
     with tb_right:
         st.markdown(
@@ -1699,12 +1828,7 @@ elif selected_nav == "Troubleshoot":
                 if st.button("Helpful Guidance", use_container_width=True, key="fb_helpful_btn"):
                     if session_id:
                         try:
-                            res = requests.post(
-                                f"{RAG_API_URL}/history/{session_id}/feedback",
-                                json={"feedback": "helpful", "comment": None},
-                                timeout=5
-                            )
-                            if res.status_code == 200:
+                            if post_feedback(session_id, "helpful"):
                                 st.success("Thank you! Feedback recorded.")
                         except Exception:
                             st.error("Could not record feedback.")
@@ -1719,12 +1843,7 @@ elif selected_nav == "Troubleshoot":
                 if st.button("Submit Feedback", type="primary", key="fb_submit_btn"):
                     if session_id:
                         try:
-                            res = requests.post(
-                                f"{RAG_API_URL}/history/{session_id}/feedback",
-                                json={"feedback": "not_helpful", "comment": comment_text.strip() if comment_text.strip() else None},
-                                timeout=5
-                            )
-                            if res.status_code == 200:
+                            if post_feedback(session_id, "not_helpful", comment_text.strip() if comment_text.strip() else None):
                                 st.success("Feedback submitted.")
                                 st.session_state["show_feedback_comment"] = False
                                 st.rerun()
@@ -1754,89 +1873,82 @@ elif selected_nav == "History":
     )
 
     try:
-        response = requests.get(f"{RAG_API_URL}/history", timeout=10)
+        sessions = fetch_history_sessions()
+        total_sessions = len(sessions)
+        helpful_sessions = len([s for s in sessions if s.get("feedback") == "helpful"])
+        unique_machines_count = len(set([s.get("machine") for s in sessions if s.get("machine")]))
 
-        if response.status_code != 200:
-            st.error("Could not load troubleshooting history.")
+        hk_col1, hk_col2, hk_col3 = st.columns(3)
+        with hk_col1:
+            st.markdown(clean_html(f"""
+            <div class="neri-card" style="padding: 16px; height: 100%;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Total Sessions</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{total_sessions}</div>
+            </div>
+            """), unsafe_allow_html=True)
+        with hk_col2:
+            st.markdown(clean_html(f"""
+            <div class="neri-card" style="padding: 16px; height: 100%;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Helpful Feedback</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0F766E; margin-top: 4px;">{helpful_sessions}</div>
+            </div>
+            """), unsafe_allow_html=True)
+        with hk_col3:
+            st.markdown(clean_html(f"""
+            <div class="neri-card" style="padding: 16px; height: 100%;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Unique Equipment</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{unique_machines_count}</div>
+            </div>
+            """), unsafe_allow_html=True)
+
+        st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+
+        if not sessions:
+            st.info("No troubleshooting sessions found in history.")
         else:
-            sessions = response.json().get("sessions", [])
+            # Optional filter clearing
+            if st.session_state.get("history_filter_machine"):
+                st.caption(f"Filtering history by machine: {st.session_state['history_filter_machine']}")
+                if st.button("Clear Machine Filter", key="clear_hist_filter"):
+                    st.session_state["history_filter_machine"] = None
+                    st.rerun()
 
-            # Summary KPIs for History
-            total_sessions = len(sessions)
-            helpful_sessions = len([s for s in sessions if s.get("feedback") == "helpful"])
-            unique_machines_count = len(set([s.get("machine") for s in sessions if s.get("machine")]))
+            for session in sessions:
+                s_id = session.get("id")
+                m_name = session.get("machine", "Unknown Machine")
+                m_id = session.get("machine_id", "N/A")
+                prob = session.get("problem", "N/A")
+                dt = session.get("created_at", "")[:16].replace("T", " ")
+                fb = session.get("feedback")
+                fb_str = f"Feedback: {fb.title()}" if fb else "Feedback: None"
 
-            hk_col1, hk_col2, hk_col3 = st.columns(3)
-            with hk_col1:
-                st.markdown(clean_html(f"""
-                <div class="neri-card" style="padding: 16px; height: 100%;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Total Sessions</div>
-                    <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{total_sessions}</div>
-                </div>
-                """), unsafe_allow_html=True)
-            with hk_col2:
-                st.markdown(clean_html(f"""
-                <div class="neri-card" style="padding: 16px; height: 100%;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Helpful Feedback</div>
-                    <div style="font-size: 1.75rem; font-weight: 800; color: #0F766E; margin-top: 4px;">{helpful_sessions}</div>
-                </div>
-                """), unsafe_allow_html=True)
-            with hk_col3:
-                st.markdown(clean_html(f"""
-                <div class="neri-card" style="padding: 16px; height: 100%;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Unique Equipment</div>
-                    <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{unique_machines_count}</div>
-                </div>
-                """), unsafe_allow_html=True)
+                exp_label = f"{m_name} (ID: {m_id}) — {prob[:60]}... [{dt}]"
 
-            st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+                with st.expander(exp_label):
+                    st.markdown(
+                        clean_html(f"""
+                        <div style="font-size: 0.875rem; color: #14202B; line-height: 1.6; margin-bottom: 12px;">
+                            <strong>Date/Time:</strong> {dt}<br>
+                            <strong>Machine:</strong> {m_name} ({m_id})<br>
+                            <strong>Problem:</strong> {prob}<br>
+                            {"<strong>Error Code:</strong> " + session['error_code'] + "<br>" if session.get('error_code') else ""}
+                            <strong>Status:</strong> {fb_str}
+                        </div>
+                        """),
+                        unsafe_allow_html=True
+                    )
 
-            if not sessions:
-                st.info("No troubleshooting sessions found in history.")
-            else:
-                # Optional filter clearing
-                if st.session_state.get("history_filter_machine"):
-                    st.caption(f"Filtering history by machine: {st.session_state['history_filter_machine']}")
-                    if st.button("Clear Machine Filter", key="clear_hist_filter"):
-                        st.session_state["history_filter_machine"] = None
-                        st.rerun()
+                    if st.button("View Archived Diagnostic Report", key=f"hist_view_{s_id}"):
+                        try:
+                            det = fetch_session_detail(s_id)
+                            if det:
+                                st.session_state["history_detail"] = det
+                                st.rerun()
+                        except Exception:
+                            st.error("Could not load session details.")
 
-                for session in sessions:
-                    s_id = session.get("id")
-                    m_name = session.get("machine", "Unknown Machine")
-                    m_id = session.get("machine_id", "N/A")
-                    prob = session.get("problem", "N/A")
-                    dt = session.get("created_at", "")[:16].replace("T", " ")
-                    fb = session.get("feedback")
-                    fb_str = f"Feedback: {fb.title()}" if fb else "Feedback: None"
-
-                    exp_label = f"{m_name} (ID: {m_id}) — {prob[:60]}... [{dt}]"
-
-                    with st.expander(exp_label):
-                        st.markdown(
-                            clean_html(f"""
-                            <div style="font-size: 0.875rem; color: #14202B; line-height: 1.6; margin-bottom: 12px;">
-                                <strong>Date/Time:</strong> {dt}<br>
-                                <strong>Machine:</strong> {m_name} ({m_id})<br>
-                                <strong>Problem:</strong> {prob}<br>
-                                {"<strong>Error Code:</strong> " + session['error_code'] + "<br>" if session.get('error_code') else ""}
-                                <strong>Status:</strong> {fb_str}
-                            </div>
-                            """),
-                            unsafe_allow_html=True
-                        )
-
-                        if st.button("View Archived Diagnostic Report", key=f"hist_view_{s_id}"):
-                            try:
-                                det_res = requests.get(f"{RAG_API_URL}/history/{s_id}", timeout=10)
-                                if det_res.status_code == 200:
-                                    st.session_state["history_detail"] = det_res.json()
-                                    st.rerun()
-                            except Exception:
-                                st.error("Could not load session details.")
-
-    except requests.RequestException:
-        st.error("Could not connect to the Neri API server.")
+    except Exception:
+        st.error("Could not load troubleshooting history.")
 
     # Detail View Report Modal Section
     if st.session_state.get("history_detail") is not None:
@@ -1937,43 +2049,41 @@ elif selected_nav == "Documents":
 
     # Document Summary KPIs
     try:
-        doc_list_res = requests.get(f"{RAG_API_URL}/documents", timeout=5)
-        if doc_list_res.status_code == 200:
-            all_docs = doc_list_res.json().get("documents", [])
-            total_docs = len(all_docs)
-            manuals_count = len([d for d in all_docs if "manual" in str(d.get("document_type", "")).lower()])
-            logs_count = len([d for d in all_docs if "log" in str(d.get("document_type", "")).lower()])
-            safety_count = len([d for d in all_docs if "safety" in str(d.get("document_type", "")).lower()])
+        all_docs = fetch_documents_list()
+        total_docs = len(all_docs)
+        manuals_count = len([d for d in all_docs if "manual" in str(d.get("document_type", "")).lower()])
+        logs_count = len([d for d in all_docs if "log" in str(d.get("document_type", "")).lower()])
+        safety_count = len([d for d in all_docs if "safety" in str(d.get("document_type", "")).lower()])
 
-            dk_col1, dk_col2, dk_col3, dk_col4 = st.columns(4)
-            with dk_col1:
-                st.markdown(clean_html(f"""
-                <div class="neri-card" style="padding: 16px; height: 100%;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Total Documents</div>
-                    <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{total_docs}</div>
-                </div>
-                """), unsafe_allow_html=True)
-            with dk_col2:
-                st.markdown(clean_html(f"""
-                <div class="neri-card" style="padding: 16px; height: 100%;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Manuals</div>
-                    <div style="font-size: 1.75rem; font-weight: 800; color: #0F766E; margin-top: 4px;">{manuals_count}</div>
-                </div>
-                """), unsafe_allow_html=True)
-            with dk_col3:
-                st.markdown(clean_html(f"""
-                <div class="neri-card" style="padding: 16px; height: 100%;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Logs</div>
-                    <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{logs_count}</div>
-                </div>
-                """), unsafe_allow_html=True)
-            with dk_col4:
-                st.markdown(clean_html(f"""
-                <div class="neri-card" style="padding: 16px; height: 100%;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Safety Specs</div>
-                    <div style="font-size: 1.75rem; font-weight: 800; color: #D97706; margin-top: 4px;">{safety_count}</div>
-                </div>
-                """), unsafe_allow_html=True)
+        dk_col1, dk_col2, dk_col3, dk_col4 = st.columns(4)
+        with dk_col1:
+            st.markdown(clean_html(f"""
+            <div class="neri-card" style="padding: 16px; height: 100%;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Total Documents</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{total_docs}</div>
+            </div>
+            """), unsafe_allow_html=True)
+        with dk_col2:
+            st.markdown(clean_html(f"""
+            <div class="neri-card" style="padding: 16px; height: 100%;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Manuals</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0F766E; margin-top: 4px;">{manuals_count}</div>
+            </div>
+            """), unsafe_allow_html=True)
+        with dk_col3:
+            st.markdown(clean_html(f"""
+            <div class="neri-card" style="padding: 16px; height: 100%;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Logs</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0B1726; margin-top: 4px;">{logs_count}</div>
+            </div>
+            """), unsafe_allow_html=True)
+        with dk_col4:
+            st.markdown(clean_html(f"""
+            <div class="neri-card" style="padding: 16px; height: 100%;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #5B7180; text-transform: uppercase;">Safety Specs</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #D97706; margin-top: 4px;">{safety_count}</div>
+            </div>
+            """), unsafe_allow_html=True)
     except Exception:
         pass
 
@@ -2009,21 +2119,17 @@ elif selected_nav == "Documents":
                             "Safety Procedure": "safety"
                         }
                         try:
-                            with st.spinner("Indexing document into ChromaDB..."):
-                                up_res = requests.post(
-                                    f"{RAG_API_URL}/documents/upload",
-                                    files={"file": (up_file.name, up_file.getvalue(), up_file.type)},
-                                    data={
-                                        "document_type": type_map[doc_type],
-                                        "machine": machine_tag.strip() if machine_tag.strip() else None,
-                                        "version": version_tag.strip() if version_tag.strip() else None,
-                                        "owner": owner_tag.strip() if owner_tag.strip() else None,
-                                    },
-                                    timeout=120
+                            with st.spinner("Indexing document into Knowledge Base..."):
+                                res_json = post_document_upload(
+                                    file_name=up_file.name,
+                                    file_bytes=up_file.getvalue(),
+                                    document_type=type_map[doc_type],
+                                    machine=machine_tag.strip() if machine_tag.strip() else None,
+                                    version=version_tag.strip() if version_tag.strip() else None,
+                                    owner=owner_tag.strip() if owner_tag.strip() else None,
                                 )
 
-                            if up_res.status_code == 200:
-                                res_json = up_res.json()
+                            if res_json:
                                 st.success("Document successfully uploaded and indexed!")
                                 st.markdown(
                                     clean_html(f"""
@@ -2036,10 +2142,10 @@ elif selected_nav == "Documents":
                                     unsafe_allow_html=True
                                 )
                             else:
-                                st.error(f"Upload failed: {up_res.text}")
+                                st.error("Upload failed.")
 
                         except Exception as e:
-                            st.error(f"Error connecting to backend: {e}")
+                            st.error(f"Error indexing document: {e}")
 
     # Search / Filter Bar
     f_col1, f_col2 = st.columns([2, 1])
@@ -2050,48 +2156,46 @@ elif selected_nav == "Documents":
 
     # Approved Documentation Directory List
     try:
-        doc_list_res = requests.get(f"{RAG_API_URL}/documents", timeout=10)
-        if doc_list_res.status_code == 200:
-            docs = doc_list_res.json().get("documents", [])
+        docs = fetch_documents_list()
 
-            if search_query.strip():
-                q = search_query.strip().lower()
-                docs = [d for d in docs if q in (d.get("filename", "") or "").lower() or q in (d.get("machine", "") or "").lower() or q in (d.get("document_type", "") or "").lower()]
+        if search_query.strip():
+            q = search_query.strip().lower()
+            docs = [d for d in docs if q in (d.get("filename", "") or "").lower() or q in (d.get("machine", "") or "").lower() or q in (d.get("document_type", "") or "").lower()]
 
-            if type_filter != "All Types":
-                tf_slug = type_filter.lower().replace(" ", "_")
-                docs = [d for d in docs if tf_slug in str(d.get("document_type", "")).lower() or type_filter.lower() in str(d.get("document_type", "")).lower()]
+        if type_filter != "All Types":
+            tf_slug = type_filter.lower().replace(" ", "_")
+            docs = [d for d in docs if tf_slug in str(d.get("document_type", "")).lower() or type_filter.lower() in str(d.get("document_type", "")).lower()]
 
-            if not docs:
-                st.info("No matching documents found in knowledge base.")
-            else:
-                for d in docs:
-                    st_val = str(d.get("status", "indexed")).lower()
-                    if st_val == "indexed":
-                        st_pill = '<span class="status-pill active">Indexed</span>'
-                    elif st_val == "processing":
-                        st_pill = '<span class="status-pill warning">Processing</span>'
-                    else:
-                        st_pill = '<span class="status-pill error">Error</span>'
+        if not docs:
+            st.info("No matching documents found in knowledge base.")
+        else:
+            for d in docs:
+                st_val = str(d.get("status", "indexed")).lower()
+                if st_val == "indexed":
+                    st_pill = '<span class="status-pill active">Indexed</span>'
+                elif st_val == "processing":
+                    st_pill = '<span class="status-pill warning">Processing</span>'
+                else:
+                    st_pill = '<span class="status-pill error">Error</span>'
 
-                    st.markdown(
-                        clean_html(f"""
-                        <div class="document-box">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <div style="font-weight: 700; font-size: 0.95rem; color: #0B1726; display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("file-text", color="#0F766E", size=18)} {d.get("filename", "Unknown")}
-                                </div>
-                                {st_pill}
+                st.markdown(
+                    clean_html(f"""
+                    <div class="document-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div style="font-weight: 700; font-size: 0.95rem; color: #0B1726; display: flex; align-items: center; gap: 8px;">
+                                {get_svg_icon("file-text", color="#0F766E", size=18)} {d.get("filename", "Unknown")}
                             </div>
-                            <div style="font-size: 0.825rem; color: #5B7180; line-height: 1.5;">
-                                <strong>Type:</strong> {str(d.get("document_type", "manual")).replace("_", " ").title()} &bull; 
-                                <strong>Machine:</strong> {d.get("machine") or "All Equipment"} &bull; 
-                                <strong>Version:</strong> {d.get("version") or "1.0"} &bull; 
-                                <strong>Chunks:</strong> {d.get("chunks", 0)}
-                            </div>
+                            {st_pill}
                         </div>
-                        """),
-                        unsafe_allow_html=True
-                    )
+                        <div style="font-size: 0.825rem; color: #5B7180; line-height: 1.5;">
+                            <strong>Type:</strong> {str(d.get("document_type", "manual")).replace("_", " ").title()} &bull; 
+                            <strong>Machine:</strong> {d.get("machine") or "All Equipment"} &bull; 
+                            <strong>Version:</strong> {d.get("version") or "1.0"} &bull; 
+                            <strong>Chunks:</strong> {d.get("chunks", 0)}
+                        </div>
+                    </div>
+                    """),
+                    unsafe_allow_html=True
+                )
     except Exception:
         st.error("Could not fetch document list.")

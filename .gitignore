@@ -24,7 +24,6 @@ Thumbs.db
 logs/
 
 # Generated data
-storage/
 uploads/
 
 # Python tools

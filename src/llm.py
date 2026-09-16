@@ -3,19 +3,20 @@ import json
 from openai import OpenAI
 
 from src.config import (
-    OPENAI_API_KEY,
     OPENAI_BASE_URL,
     CHAT_MODEL,
+    get_openai_api_key,
     validate_config,
 )
 
 
-validate_config()
-
-client = OpenAI(
-    api_key=OPENAI_API_KEY,
-    base_url=OPENAI_BASE_URL,
-)
+def _get_client():
+    validate_config()
+    api_key = get_openai_api_key()
+    return OpenAI(
+        api_key=api_key,
+        base_url=OPENAI_BASE_URL,
+    )
 
 
 SYSTEM_PROMPT = """
@@ -136,7 +137,7 @@ Based ONLY on the approved documentation above,
 provide the troubleshooting response.
 """
 
-    response = client.chat.completions.create(
+    response = _get_client().chat.completions.create(
         model=CHAT_MODEL,
         messages=[
             {
