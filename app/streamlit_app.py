@@ -877,23 +877,48 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
 # LOGIN PAGE (Single Centered Enterprise Card)
 # ==================================================
 
+# ==================================================
+# LOGIN PAGE (Ultra-Sleek Glassmorphic Enterprise Portal)
+# ==================================================
+
 if not st.session_state["logged_in"]:
 
     st.markdown(
         clean_html("""
         <style>
-        /* Turn the entire Login Column into ONE SINGLE UNIFIED WHITE CARD */
-        div[data-testid="column"]:has(button[key="quick_tech_login"]) {
+        /* Top Back Nav Button on Login Page */
+        div.stButton > button[key="login_back_home"] {
+            background-color: transparent !important;
+            color: #64748B !important;
+            border: 1px solid #CBD5E1 !important;
+            border-radius: 8px !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            padding: 6px 14px !important;
+            box-shadow: none !important;
+            transition: all 0.2s ease !important;
+        }
+        div.stButton > button[key="login_back_home"]:hover {
             background-color: #FFFFFF !important;
-            border: 1px solid #D9E2E7 !important;
-            border-radius: 16px !important;
-            padding: 36px 32px !important;
-            box-shadow: 0 8px 30px -4px rgba(11, 23, 38, 0.08) !important;
-            max-width: 500px !important;
-            margin: 0 auto !important;
+            color: #0284C7 !important;
+            border-color: #0284C7 !important;
+            transform: translateY(-1px);
         }
 
-        /* Completely strip Streamlit's inner form border, padding, and box-shadow */
+        /* Glassmorphic Login Card Column Wrapper */
+        div[data-testid="column"]:has(button[key="quick_tech_login"]) {
+            background: rgba(255, 255, 255, 0.92) !important;
+            border: 1px solid rgba(2, 132, 199, 0.2) !important;
+            border-radius: 24px !important;
+            padding: 40px 36px !important;
+            box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.8) inset !important;
+            backdrop-filter: blur(20px) !important;
+            max-width: 480px !important;
+            margin: 0 auto !important;
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) ease-out !important;
+        }
+
+        /* Strip inner Streamlit form borders */
         div[data-testid="column"]:has(button[key="quick_tech_login"]) [data-testid="stForm"] {
             border: none !important;
             padding: 0 !important;
@@ -902,57 +927,86 @@ if not st.session_state["logged_in"]:
             margin: 0 !important;
         }
 
-        /* Input styling inside the single login card */
+        /* Styled Input Fields inside Login Form */
         div[data-testid="column"]:has(button[key="quick_tech_login"]) [data-testid="stForm"] input {
-            background-color: #F4F7F8 !important;
-            border: 1px solid #D9E2E7 !important;
-            border-radius: 8px !important;
-            color: #14202B !important;
+            background-color: #F8FAFC !important;
+            border: 1px solid #CBD5E1 !important;
+            border-radius: 12px !important;
+            color: #0F172A !important;
+            font-size: 0.925rem !important;
+            padding: 10px 14px !important;
+            transition: all 0.2s ease !important;
         }
 
-        /* Access As Segmented Role Buttons Styling */
-        div[data-testid="column"]:has(button[key="quick_tech_login"]) div.stButton > button {
-            border-radius: 8px !important;
-            font-weight: 600 !important;
+        div[data-testid="column"]:has(button[key="quick_tech_login"]) [data-testid="stForm"] input:focus {
+            background-color: #FFFFFF !important;
+            border-color: #0284C7 !important;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18) !important;
+        }
+
+        /* Segmented Role Selector Buttons */
+        div[data-testid="column"]:has(button[key="quick_tech_login"]) div.stButton > button[key="quick_tech_login"],
+        div[data-testid="column"]:has(button[key="quick_tech_login"]) div.stButton > button[key="quick_super_login"] {
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            font-size: 0.875rem !important;
+            letter-spacing: 0.2px;
         }
         </style>
-        <div style="height: 36px;"></div>
         """),
         unsafe_allow_html=True
     )
 
-    _, login_container, _ = st.columns([1, 1.2, 1])
+    # Top Bar with Back to Landing Page link
+    l_nav1, l_nav2 = st.columns([2, 1])
+    with l_nav1:
+        st.markdown(
+            clean_html(f"""
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
+                {get_svg_icon("logo", color="#06B6D4", size=22)}
+                <span style="font-size: 1.1rem; font-weight: 800; color: #0F172A; letter-spacing: -0.3px;">NERI</span>
+                <span style="font-size: 0.775rem; font-weight: 600; color: #64748B;">Maintenance Portal</span>
+            </div>
+            """),
+            unsafe_allow_html=True
+        )
+    with l_nav2:
+        _, back_col = st.columns([1, 1])
+        with back_col:
+            if st.button("&larr; Product Overview", key="login_back_home", use_container_width=True):
+                st.session_state["show_landing_page"] = True
+                st.query_params.clear()
+                st.rerun()
+
+    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+
+    _, login_container, _ = st.columns([1, 1.25, 1])
 
     with login_container:
-        # 1. Branding Header & Welcome Subtitle
+        # 1. Branding Header & Glowing Icon Badge
         st.markdown(
             clean_html(f"""
             <div style="text-align: center; margin-bottom: 24px;">
-                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px;">
-                    {get_svg_icon("logo", color="#06B6D4", size=32)}
-                    <div style="text-align: left;">
-                        <div style="font-size: 1.5rem; font-weight: 800; color: #0F172A; letter-spacing: -0.5px; line-height: 1.1;">NERI</div>
-                        <div style="font-size: 0.775rem; font-weight: 600; color: #0284C7;">Maintenance Intelligence</div>
-                    </div>
+                <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, rgba(2, 132, 199, 0.1) 0%, rgba(6, 182, 212, 0.2) 100%); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 18px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(6, 182, 212, 0.25);">
+                    {get_svg_icon("logo", color="#0284C7", size=32)}
                 </div>
-                <h3 style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 0 0 4px 0;">Welcome back</h3>
-                <div style="font-size: 0.875rem; color: #64748B;">Sign in to Neri Maintenance Intelligence</div>
+                <h2 style="font-size: 1.6rem; font-weight: 800; color: #0F172A; margin: 0 0 6px 0; letter-spacing: -0.02em;">Welcome to Neri</h2>
+                <div style="font-size: 0.875rem; color: #64748B; line-height: 1.5;">Grounded AI Maintenance & Equipment Intelligence</div>
             </div>
             """),
             unsafe_allow_html=True
         )
 
-        # 2. Access As Segmented Control Header
+        # 2. Access Role Segmented Header
         st.markdown(
             clean_html("""
-            <div style="margin-bottom: 8px;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">ACCESS AS</div>
+            <div style="margin-bottom: 10px;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px;">SELECT PORTAL ROLE</div>
             </div>
             """),
             unsafe_allow_html=True
         )
 
-        # Single source of truth for selected role
         if "login_selected_role" not in st.session_state:
             st.session_state["login_selected_role"] = "Technician"
 
@@ -961,27 +1015,38 @@ if not st.session_state["logged_in"]:
         d_col1, d_col2 = st.columns(2)
         with d_col1:
             tech_type = "primary" if selected_role == "Technician" else "secondary"
-            if st.button("Technician", type=tech_type, use_container_width=True, key="quick_tech_login"):
+            if st.button("Technician Portal", type=tech_type, use_container_width=True, key="quick_tech_login"):
                 st.session_state["login_selected_role"] = "Technician"
                 st.rerun()
 
         with d_col2:
             super_type = "primary" if selected_role == "Supervisor" else "secondary"
-            if st.button("Supervisor", type=super_type, use_container_width=True, key="quick_super_login"):
+            if st.button("Supervisor Portal", type=super_type, use_container_width=True, key="quick_super_login"):
                 st.session_state["login_selected_role"] = "Supervisor"
                 st.rerun()
 
-        st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+        # Credential Hint Pill
+        cred_hint = "technician / tech123" if selected_role == "Technician" else "supervisor / super123"
+        st.markdown(
+            clean_html(f"""
+            <div style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 8px; padding: 8px 12px; margin: 12px 0 16px 0; font-size: 0.775rem; color: #0369A1; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-weight: 600;">Demo credentials:</span>
+                <code style="background: #FFFFFF; color: #0284C7; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 0.775rem; border: 1px solid #E0F2FE;">{cred_hint}</code>
+            </div>
+            """),
+            unsafe_allow_html=True
+        )
 
         username_default = "technician" if selected_role == "Technician" else "supervisor"
+        password_default = "tech123" if selected_role == "Technician" else "super123"
 
-        # 3. Form Section (Inner stForm border stripped by CSS above)
+        # 3. Form Section
         with st.form("login_form"):
             username_input = st.text_input("Username", value=username_default, placeholder="Enter your username")
-            password_input = st.text_input("Password", type="password", placeholder="Enter your password")
+            password_input = st.text_input("Password", type="password", value=password_default, placeholder="Enter your password")
 
-            st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
-            submit_login = st.form_submit_button("Sign In", type="primary", use_container_width=True)
+            st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
+            submit_login = st.form_submit_button("Sign In to Portal", type="primary", use_container_width=True)
 
             if submit_login:
                 username_clean = username_input.strip().lower()
@@ -1012,11 +1077,12 @@ if not st.session_state["logged_in"]:
                 else:
                     st.error("Invalid username or password.")
 
-        # 4. Footer inside the Single Card
+        # 4. Footer & Security Compliance Notice
         st.markdown(
-            clean_html("""
-            <div style="text-align: center; font-size: 0.775rem; color: #64748B; margin-top: 20px;">
-                Authorized maintenance personnel
+            clean_html(f"""
+            <div style="text-align: center; font-size: 0.775rem; color: #64748B; margin-top: 22px; border-top: 1px solid #F1F5F9; padding-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                {get_svg_icon("shield-check", color="#0284C7", size=14)}
+                <span>Authorized Manufacturing Operations Portal</span>
             </div>
             """),
             unsafe_allow_html=True
