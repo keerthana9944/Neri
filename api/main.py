@@ -309,3 +309,21 @@ def documents():
             status_code=500,
             detail="Could not retrieve documents.",
         ) from error
+
+
+@app.get("/documents/{filename}/content")
+def document_content(filename: str):
+    """Return full content of a document."""
+
+    try:
+        from src.history import get_document_content
+        return {
+            "filename": filename,
+            "content": get_document_content(filename)
+        }
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail="Could not retrieve document content.",
+        ) from error

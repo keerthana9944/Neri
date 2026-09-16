@@ -150,6 +150,16 @@ def post_document_upload(file_name: str, file_bytes: bytes, document_type: str, 
         "status": "indexed",
     }
 
+def fetch_document_content(filename: str) -> str:
+    try:
+        resp = requests.get(f"{RAG_API_URL}/documents/{filename}/content", timeout=2)
+        if resp.status_code == 200:
+            return resp.json().get("content", "")
+    except Exception:
+        pass
+    from src.history import get_document_content
+    return get_document_content(filename)
+
 def clean_html(html_str: str) -> str:
     """Removes leading and trailing whitespace from each line to prevent Streamlit Markdown from treating HTML as code blocks."""
     if not html_str:
@@ -2170,6 +2180,7 @@ elif selected_nav == "Documents":
             st.info("No matching documents found in knowledge base.")
         else:
             for d in docs:
+                fname = d.get("filename", "Unknown")
                 st_val = str(d.get("status", "indexed")).lower()
                 if st_val == "indexed":
                     st_pill = '<span class="status-pill active">Indexed</span>'
@@ -2178,24 +2189,46 @@ elif selected_nav == "Documents":
                 else:
                     st_pill = '<span class="status-pill error">Error</span>'
 
-                st.markdown(
-                    clean_html(f"""
-                    <div class="document-box">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div style="font-weight: 700; font-size: 0.95rem; color: #0B1726; display: flex; align-items: center; gap: 8px;">
-                                {get_svg_icon("file-text", color="#0F766E", size=18)} {d.get("filename", "Unknown")}
+                doc_type = str(d.get("document_type", "manual")).replace("_", " ").title()
+                machine = d.get("machine") or "All Equipment"
+                version = d.get("version") or "1.0"
+                chunks = d.get("chunks", 0)
+
+                exp_label = f"{fname}  •  {doc_type}  •  {machine}  ({chunks} Chunks)"
+
+                with st.expander(exp_label):
+                    st.markdown(
+                        clean_html(f"""
+                        <div class="document-box" style="margin-bottom: 12px; background: #FFFFFF;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <div style="font-weight: 700; font-size: 1rem; color: #0B1726; display: flex; align-items: center; gap: 8px;">
+                                    {get_svg_icon("file-text", color="#0F766E", size=20)} {fname}
+                                </div>
+                                {st_pill}
                             </div>
-                            {st_pill}
+                            <div style="font-size: 0.825rem; color: #5B7180; line-height: 1.5;">
+                                <strong>Type:</strong> {doc_type} &bull; 
+                                <strong>Machine:</strong> {machine} &bull; 
+                                <strong>Version:</strong> {version} &bull; 
+                                <strong>Chunks:</strong> {chunks}
+                            </div>
                         </div>
-                        <div style="font-size: 0.825rem; color: #5B7180; line-height: 1.5;">
-                            <strong>Type:</strong> {str(d.get("document_type", "manual")).replace("_", " ").title()} &bull; 
-                            <strong>Machine:</strong> {d.get("machine") or "All Equipment"} &bull; 
-                            <strong>Version:</strong> {d.get("version") or "1.0"} &bull; 
-                            <strong>Chunks:</strong> {d.get("chunks", 0)}
+                        <div style="font-size: 0.75rem; font-weight: 700; color: #0F766E; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                            {get_svg_icon("document", color="#0F766E", size=14)} DOCUMENT CONTENT PREVIEW
                         </div>
-                    </div>
-                    """),
-                    unsafe_allow_html=True
-                )
+                        """),
+                        unsafe_allow_html=True
+                    )
+
+                    doc_text = fetch_document_content(fname)
+
+                    st.markdown(
+                        clean_html(f"""
+                        <div style="background: #0B1726; color: #E2E8F0; border-radius: 8px; padding: 18px; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.85rem; line-height: 1.6; max-height: 420px; overflow-y: auto; white-space: pre-wrap; border: 1px solid #16263A;">
+{doc_text}
+                        </div>
+                        """),
+                        unsafe_allow_html=True
+                    )
     except Exception:
         st.error("Could not fetch document list.")

@@ -462,4 +462,48 @@ def auto_seed_if_empty():
             owner="Maintenance Department",
             chunks=len(chunks),
             status="indexed",
-        )
+        )
+
+
+def get_document_content(filename: str) -> str:
+    """Retrieve full text content of a document by filename."""
+
+    for sub in ["manuals", "maintenance_logs", "safety"]:
+        path = BASE_DIR / "data" / sub / filename
+        if path.exists():
+            try:
+                return path.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                pass
+
+    up_path = BASE_DIR / "uploads" / filename
+    if up_path.exists():
+        if up_path.suffix.lower() == ".txt":
+            try:
+                return up_path.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                pass
+        elif up_path.suffix.lower() == ".pdf":
+            try:
+                import pypdf
+                reader = pypdf.PdfReader(str(up_path))
+                pages = [
+                    page.extract_text()
+                    for page in reader.pages
+                    if page.extract_text()
+                ]
+                return "\n\n".join(pages)
+            except Exception:
+                pass
+
+    try:
+        from src.vector_store import get_collection
+        collection = get_collection()
+        res = collection.get(where={"document": filename})
+        if res and res.get("documents"):
+            return "\n\n--- Chunk Divider ---\n\n".join(res["documents"])
+    except Exception:
+        pass
+
+    return "Document content unavailable."
+
