@@ -340,16 +340,60 @@ st.markdown(
             transform: translateY(-2px) scale(1.01);
         }
 
-        /* Streamlit Form Input Styling */
+        /* FORCE LIGHT MODE COLOR SCHEME & CRISP CONTRAST ACROSS ALL COMPONENT STATES */
+        :root {
+            color-scheme: light !important;
+        }
+
+        /* Streamlit Form Input & Selectbox Styling */
+        div[data-baseweb="input"],
+        div[data-baseweb="base-input"],
+        div[data-baseweb="select"],
         div[data-baseweb="select"] > div,
-        div[data-baseweb="input"] > div,
+        div[data-baseweb="select"] [role="button"],
         textarea[data-testid="stTextArea"] {
             background-color: #FFFFFF !important;
             border: 1px solid #CBD5E1 !important;
             border-radius: 10px !important;
             color: #0F172A !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
             transition: all 0.2s ease-in-out !important;
+        }
+
+        div[data-baseweb="input"] input,
+        div[data-baseweb="base-input"] input,
+        textarea[data-testid="stTextArea"] {
+            color: #0F172A !important;
+            background-color: #FFFFFF !important;
+            font-weight: 600 !important;
+        }
+
+        div[data-baseweb="input"] input::placeholder,
+        textarea[data-testid="stTextArea"]::placeholder {
+            color: #94A3B8 !important;
+            opacity: 1 !important;
+        }
+
+        div[data-baseweb="select"] span,
+        div[data-baseweb="select"] div,
+        div[data-baseweb="select"] svg {
+            color: #0F172A !important;
+            fill: #0F172A !important;
+        }
+
+        /* Selectbox Popover Options List */
+        ul[data-baseweb="menu"],
+        div[data-baseweb="popover"] {
+            background-color: #FFFFFF !important;
+            border: 1px solid #CBD5E1 !important;
+            border-radius: 10px !important;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15) !important;
+        }
+
+        ul[data-baseweb="menu"] li,
+        div[data-baseweb="popover"] div {
+            color: #0F172A !important;
+            font-weight: 600 !important;
         }
 
         div[data-baseweb="select"]:focus-within > div,
@@ -657,19 +701,57 @@ st.markdown(
             border: 1px solid #FCA5A5;
         }
 
-        /* Streamlit Expander Styling */
-        .streamlit-expanderHeader {
-            font-weight: 700 !important;
-            border-radius: 10px !important;
+        /* STREAMLIT EXPANDER FIX: Crisp Dark Text on Elevated White/Slate Header */
+        div[data-testid="stExpander"],
+        .streamlit-expander {
             background-color: #FFFFFF !important;
-            border: 1px solid #E2E8F0 !important;
+            border: 1px solid #CBD5E1 !important;
+            border-radius: 12px !important;
+            margin-bottom: 12px !important;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+            overflow: hidden !important;
+            transition: all 0.25s ease !important;
+        }
+
+        div[data-testid="stExpander"]:hover {
+            border-color: #0284C7 !important;
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.12) !important;
+        }
+
+        div[data-testid="stExpander"] details summary,
+        div[data-testid="stExpander"] [data-testid="stExpanderSummary"],
+        .streamlit-expanderHeader {
+            background-color: #F8FAFC !important;
+            border-bottom: 1px solid #F1F5F9 !important;
+            border-radius: 12px !important;
+            padding: 12px 16px !important;
             transition: all 0.2s ease !important;
         }
 
+        div[data-testid="stExpander"] details summary:hover,
+        div[data-testid="stExpander"] [data-testid="stExpanderSummary"]:hover,
         .streamlit-expanderHeader:hover {
-            border-color: #0284C7 !important;
-            color: #0284C7 !important;
             background-color: #F0F9FF !important;
+        }
+
+        /* FORCE ALL TEXT IN EXPANDER SUMMARY HEADERS TO CRISP #0F172A */
+        div[data-testid="stExpander"] details summary *,
+        div[data-testid="stExpander"] details summary p,
+        div[data-testid="stExpander"] details summary span,
+        div[data-testid="stExpander"] [data-testid="stExpanderSummary"] *,
+        div[data-testid="stExpander"] [data-testid="stExpanderSummary"] p,
+        div[data-testid="stExpander"] [data-testid="stExpanderSummary"] span,
+        .streamlit-expanderHeader,
+        .streamlit-expanderHeader * {
+            color: #0F172A !important;
+            font-weight: 700 !important;
+            font-size: 0.925rem !important;
+        }
+
+        div[data-testid="stExpander"] details summary svg,
+        div[data-testid="stExpander"] [data-testid="stExpanderSummary"] svg {
+            color: #0284C7 !important;
+            fill: #0284C7 !important;
         }
     </style>
     """),
