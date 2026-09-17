@@ -411,34 +411,11 @@ st.markdown(
             box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18) !important;
         }
 
-        /* PERMANENT VISIBLE SIDEBAR SYSTEM */
-        section[data-testid="stSidebar"],
-        section[aria-label="sidebar"] {
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            transform: none !important;
-            margin-left: 0 !important;
-            left: 0 !important;
-            top: 0 !important;
-            bottom: 0 !important;
-            height: 100vh !important;
-            width: 260px !important;
-            min-width: 260px !important;
-            max-width: 260px !important;
-            background: linear-gradient(180deg, #130924 0%, #0F172A 100%) !important;
-            border-right: 1px solid #1E293B !important;
-            box-sizing: border-box !important;
-            z-index: 99999 !important;
-            position: fixed !important;
-        }
-
-        /* Ensure Main Content Container is cleanly offset by 260px */
+        /* DYNAMIC LAYOUT CONTAINER CONTROL */
         [data-testid="stMain"],
         section.main,
         div.main {
-            margin-left: 260px !important;
-            width: calc(100% - 260px) !important;
+            transition: margin-left 0.2s ease, width 0.2s ease !important;
         }
 
         /* Completely Hide Scrollbars on Sidebar */
@@ -774,6 +751,82 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# Dynamic layout CSS injection based on authentication state
+is_user_logged_in = st.session_state.get("logged_in", False)
+
+if is_user_logged_in:
+    dynamic_layout_css = """
+    <style>
+        section[data-testid="stSidebar"],
+        section[aria-label="sidebar"] {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            transform: none !important;
+            margin-left: 0 !important;
+            left: 0 !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            height: 100vh !important;
+            width: 260px !important;
+            min-width: 260px !important;
+            max-width: 260px !important;
+            background: linear-gradient(180deg, #130924 0%, #0F172A 100%) !important;
+            border-right: 1px solid #1E293B !important;
+            box-sizing: border-box !important;
+            z-index: 99999 !important;
+            position: fixed !important;
+        }
+
+        [data-testid="stMain"],
+        section.main,
+        div.main {
+            margin-left: 260px !important;
+            width: calc(100% - 260px) !important;
+        }
+
+        .block-container {
+            max-width: 1240px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+    </style>
+    """
+else:
+    dynamic_layout_css = """
+    <style>
+        section[data-testid="stSidebar"],
+        section[aria-label="sidebar"] {
+            display: none !important;
+            width: 0px !important;
+            visibility: hidden !important;
+            margin-left: -9999px !important;
+        }
+
+        [data-testid="stMain"],
+        section.main,
+        div.main {
+            margin-left: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .block-container {
+            max-width: 1180px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+            text-align: center !important;
+        }
+    </style>
+    """
+
+st.markdown(clean_html(dynamic_layout_css), unsafe_allow_html=True)
+
+
 # ==================================================
 # PUBLIC LANDING PAGE (Enterprise Product Introduction)
 # ==================================================
@@ -802,24 +855,26 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
         with btn_col2:
             if st.button("Sign In", type="primary", use_container_width=True, key="landing_top_signin"):
                 st.session_state["show_landing_page"] = False
+                if "page" in st.query_params:
+                    del st.query_params["page"]
                 st.query_params.clear()
                 st.query_params["page"] = "login"
                 st.rerun()
 
     st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
 
-    # Hero Section Banner (Dark Cyber Industrial Theme)
+    # Hero Section Banner (Centered Dark Cyber Industrial Theme)
     st.markdown(
         clean_html(f"""
-        <div style="background: linear-gradient(135deg, #130924 0%, #0F172A 100%); border-radius: 16px; padding: 48px 40px; margin-bottom: 40px; border: 1px solid #1E293B; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);">
-            <div style="max-width: 780px;">
-                <div style="font-size: 0.775rem; font-weight: 700; color: #A78BFA; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+        <div style="background: linear-gradient(135deg, #130924 0%, #0F172A 100%); border-radius: 20px; padding: 52px 36px; margin-bottom: 40px; border: 1px solid #1E293B; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.22); text-align: center;">
+            <div style="max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div style="font-size: 0.775rem; font-weight: 700; color: #A78BFA; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(139, 92, 246, 0.12); padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(139, 92, 246, 0.3);">
                     {get_svg_icon("shield-check", color="#8B5CF6", size=16)} AI MAINTENANCE INTELLIGENCE
                 </div>
-                <h1 style="font-size: 2.75rem; font-weight: 800; color: #FFFFFF; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 18px;">
+                <h1 style="font-size: 2.85rem; font-weight: 800; color: #FFFFFF; line-height: 1.18; letter-spacing: -0.02em; margin-bottom: 18px; text-align: center;">
                     Resolve machine problems<br><span style="background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">with grounded intelligence.</span>
                 </h1>
-                <p style="font-size: 1.05rem; line-height: 1.6; color: #94A3B8; margin-bottom: 28px; max-width: 640px;">
+                <p style="font-size: 1.05rem; line-height: 1.6; color: #94A3B8; margin: 0 auto 28px auto; max-width: 660px; text-align: center;">
                     Neri helps maintenance teams troubleshoot industrial equipment using approved machine manuals, maintenance records, and safety procedures.
                 </p>
             </div>
@@ -828,14 +883,14 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
         unsafe_allow_html=True
     )
 
-    # Product Technical Diagnostic Preview Card (Horizontal Grid)
+    # Product Technical Diagnostic Preview Card (Centered Container & Grid)
     st.markdown(
         clean_html(f"""
-        <div style="margin-bottom: 40px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #7C3AED; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+        <div style="margin-bottom: 40px; text-align: center;">
+            <div style="font-size: 0.775rem; font-weight: 700; color: #7C3AED; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px; text-align: center;">
                 TECHNICAL DIAGNOSTIC PREVIEW
             </div>
-            <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 28px; box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.06);">
+            <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 28px; box-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.06); text-align: left; max-width: 1080px; margin: 0 auto;">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 16px; margin-bottom: 20px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         {get_svg_icon("wrench", color="#0F172A", size=22)}
@@ -850,12 +905,12 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
-                    <div style="background-color: #F3E8FF; border-radius: 10px; padding: 16px; border-left: 4px solid #7C3AED;">
+                    <div style="background-color: #F3E8FF; border-radius: 12px; padding: 18px; border-left: 4px solid #7C3AED;">
                         <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Observed Problem</div>
                         <div style="font-size: 0.9rem; font-weight: 700; color: #0F172A; margin-top: 4px;">Pressure dropping under load</div>
                     </div>
 
-                    <div style="background-color: #FFF7E6; border-radius: 10px; padding: 16px; border: 1px solid #F59E0B; color: #92400E;">
+                    <div style="background-color: #FFF7E6; border-radius: 12px; padding: 18px; border: 1px solid #F59E0B; color: #92400E;">
                         <div style="font-size: 0.75rem; font-weight: 700; color: #854D0E; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
                             {get_svg_icon("alert", color="#B45309", size=14)} Safety Warning
                         </div>
@@ -864,7 +919,7 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
                         </div>
                     </div>
 
-                    <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
+                    <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px;">
                         <div style="font-size: 0.75rem; font-weight: 700; color: #7C3AED; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
                             {get_svg_icon("document", color="#7C3AED", size=14)} Source Reference
                         </div>
@@ -878,16 +933,18 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
         unsafe_allow_html=True
     )
 
-    # Value Capabilities Strip (4 Columns)
+    # Value Capabilities Strip (4 Columns Centered)
     v_col1, v_col2, v_col3, v_col4 = st.columns(4)
 
     with v_col1:
         st.markdown(
             clean_html(f"""
-            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
-                {get_svg_icon("document", color="#7C3AED", size=22)}
-                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">GROUNDED</div>
-                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Answers are based on approved maintenance documentation.</div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 24px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; transition: all 0.25s ease;" class="neri-card">
+                <div style="width: 44px; height: 44px; background: #F3E8FF; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                    {get_svg_icon("document", color="#7C3AED", size=22)}
+                </div>
+                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin-bottom: 6px;">GROUNDED</div>
+                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45; text-align: center;">Answers are based on approved maintenance documentation.</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -896,10 +953,12 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     with v_col2:
         st.markdown(
             clean_html(f"""
-            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
-                {get_svg_icon("shield-check", color="#7C3AED", size=22)}
-                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">SAFETY-AWARE</div>
-                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Safety procedures remain part of the troubleshooting workflow.</div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 24px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; transition: all 0.25s ease;" class="neri-card">
+                <div style="width: 44px; height: 44px; background: #F3E8FF; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                    {get_svg_icon("shield-check", color="#7C3AED", size=22)}
+                </div>
+                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin-bottom: 6px;">SAFETY-AWARE</div>
+                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45; text-align: center;">Safety procedures remain part of the troubleshooting workflow.</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -908,10 +967,12 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     with v_col3:
         st.markdown(
             clean_html(f"""
-            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
-                {get_svg_icon("search", color="#7C3AED", size=22)}
-                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">TRACEABLE</div>
-                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Responses are connected to explicit source references.</div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 24px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; transition: all 0.25s ease;" class="neri-card">
+                <div style="width: 44px; height: 44px; background: #F3E8FF; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                    {get_svg_icon("search", color="#7C3AED", size=22)}
+                </div>
+                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin-bottom: 6px;">TRACEABLE</div>
+                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45; text-align: center;">Responses are connected to explicit source references.</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -920,10 +981,12 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     with v_col4:
         st.markdown(
             clean_html(f"""
-            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
-                {get_svg_icon("factory", color="#7C3AED", size=22)}
-                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">BUILT FOR MAINTENANCE</div>
-                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Designed around real manufacturing troubleshooting workflows.</div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 24px 18px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; transition: all 0.25s ease;" class="neri-card">
+                <div style="width: 44px; height: 44px; background: #F3E8FF; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                    {get_svg_icon("factory", color="#7C3AED", size=22)}
+                </div>
+                <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin-bottom: 6px;">BUILT FOR MAINTENANCE</div>
+                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45; text-align: center;">Designed around real manufacturing troubleshooting workflows.</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -931,14 +994,14 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
 
     st.markdown("<div style='height: 48px;'></div>", unsafe_allow_html=True)
 
-    # Final Action CTA
+    # Final Action CTA (Centered)
     st.markdown(
         clean_html(f"""
-        <div style="background: linear-gradient(135deg, #130924 0%, #0F172A 100%); color: #FFFFFF; border-radius: 14px; padding: 40px; text-align: center; margin-bottom: 36px; border: 1px solid #1E293B;">
-            <h2 style="font-size: 1.85rem; font-weight: 800; color: #FFFFFF; margin: 0 0 10px 0;">
+        <div style="background: linear-gradient(135deg, #130924 0%, #0F172A 100%); color: #FFFFFF; border-radius: 18px; padding: 44px 32px; text-align: center; margin-bottom: 36px; border: 1px solid #1E293B;">
+            <h2 style="font-size: 1.85rem; font-weight: 800; color: #FFFFFF; margin: 0 0 10px 0; text-align: center;">
                 Ready to troubleshoot?
             </h2>
-            <p style="font-size: 0.975rem; color: #94A3B8; max-width: 540px; margin: 0 auto 24px auto; line-height: 1.5;">
+            <p style="font-size: 0.975rem; color: #94A3B8; max-width: 540px; margin: 0 auto 28px auto; line-height: 1.5; text-align: center;">
                 Sign in to Neri Maintenance Intelligence to begin diagnosing shop floor machinery.
             </p>
         </div>
@@ -946,15 +1009,17 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
         unsafe_allow_html=True
     )
 
-    cta_center_col1, cta_center_col2, cta_center_col3 = st.columns([1, 1.2, 1])
+    cta_center_col1, cta_center_col2, cta_center_col3 = st.columns([1, 1, 1])
     with cta_center_col2:
         if st.button("Sign In to Neri", type="primary", use_container_width=True, key="landing_final_cta"):
             st.session_state["show_landing_page"] = False
+            if "page" in st.query_params:
+                del st.query_params["page"]
             st.query_params.clear()
             st.query_params["page"] = "login"
             st.rerun()
 
-    # Footer
+    # Footer (Centered)
     st.markdown(
         clean_html(f"""
         <div style="text-align: center; border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 48px; color: #64748B; font-size: 0.825rem;">
@@ -970,10 +1035,6 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
 
     st.stop()
 
-
-# ==================================================
-# LOGIN PAGE (Single Centered Enterprise Card)
-# ==================================================
 
 # ==================================================
 # LOGIN PAGE (Ultra-Sleek Glassmorphic Enterprise Portal)
@@ -1003,7 +1064,7 @@ if not st.session_state["logged_in"]:
             transform: translateY(-1px);
         }
 
-        /* Glassmorphic Login Card Column Wrapper */
+        /* Glassmorphic Login Card Column Wrapper Centering */
         div[data-testid="column"]:has(button[key="quick_tech_login"]) {
             background: rgba(255, 255, 255, 0.92) !important;
             border: 1px solid rgba(124, 58, 237, 0.2) !important;
@@ -1011,7 +1072,7 @@ if not st.session_state["logged_in"]:
             padding: 40px 36px !important;
             box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.8) inset !important;
             backdrop-filter: blur(20px) !important;
-            max-width: 480px !important;
+            max-width: 460px !important;
             margin: 0 auto !important;
             animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) ease-out !important;
         }
@@ -1068,38 +1129,45 @@ if not st.session_state["logged_in"]:
             """),
             unsafe_allow_html=True
         )
+
+    # Callback function to handle Product Overview redirection safely before rerun
+    def go_to_landing_page():
+        st.session_state["show_landing_page"] = True
+        st.session_state["logged_in"] = False
+        if "page" in st.query_params:
+            del st.query_params["page"]
+        st.query_params.clear()
+
     with l_nav2:
         _, back_col = st.columns([1, 1])
         with back_col:
-            if st.button("&larr; Product Overview", key="login_back_home", use_container_width=True):
-                st.session_state["show_landing_page"] = True
-                st.query_params.clear()
-                st.rerun()
+            st.button("&larr; Product Overview", key="login_back_home", use_container_width=True, on_click=go_to_landing_page)
 
-    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
 
-    _, login_container, _ = st.columns([1, 1.25, 1])
+    # Center-aligned Login Container Column
+    _, login_container, _ = st.columns([1, 1.4, 1])
 
     with login_container:
-        # 1. Branding Header & Glowing Icon Badge
+        # 1. Branding Header & Glowing Icon Badge (Centered)
         st.markdown(
             clean_html(f"""
             <div style="text-align: center; margin-bottom: 24px;">
                 <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(139, 92, 246, 0.2) 100%); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 18px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25);">
                     {get_svg_icon("logo", color="#7C3AED", size=32)}
                 </div>
-                <h2 style="font-size: 1.6rem; font-weight: 800; color: #0F172A; margin: 0 0 6px 0; letter-spacing: -0.02em;">Welcome to Neri</h2>
-                <div style="font-size: 0.875rem; color: #64748B; line-height: 1.5;">Grounded AI Maintenance & Equipment Intelligence</div>
+                <h2 style="font-size: 1.6rem; font-weight: 800; color: #0F172A; margin: 0 0 6px 0; letter-spacing: -0.02em; text-align: center;">Welcome to Neri</h2>
+                <div style="font-size: 0.875rem; color: #64748B; line-height: 1.5; text-align: center;">Grounded AI Maintenance & Equipment Intelligence</div>
             </div>
             """),
             unsafe_allow_html=True
         )
 
-        # 2. Access Role Segmented Header
+        # 2. Access Role Segmented Header (Centered)
         st.markdown(
             clean_html("""
-            <div style="margin-bottom: 10px;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px;">SELECT PORTAL ROLE</div>
+            <div style="margin-bottom: 10px; text-align: center;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px; text-align: center;">SELECT PORTAL ROLE</div>
             </div>
             """),
             unsafe_allow_html=True
@@ -1123,11 +1191,11 @@ if not st.session_state["logged_in"]:
                 st.session_state["login_selected_role"] = "Supervisor"
                 st.rerun()
 
-        # Credential Hint Pill
+        # Credential Hint Pill (Centered)
         cred_hint = "technician / tech123" if selected_role == "Technician" else "supervisor / super123"
         st.markdown(
             clean_html(f"""
-            <div style="background: #F3E8FF; border: 1px solid #DDD6FE; border-radius: 8px; padding: 8px 12px; margin: 12px 0 16px 0; font-size: 0.775rem; color: #6D28D9; display: flex; align-items: center; justify-content: space-between;">
+            <div style="background: #F3E8FF; border: 1px solid #DDD6FE; border-radius: 8px; padding: 8px 12px; margin: 12px auto 16px auto; font-size: 0.775rem; color: #6D28D9; display: flex; align-items: center; justify-content: space-between; max-width: 360px;">
                 <span style="font-weight: 600;">Demo credentials:</span>
                 <code style="background: #FFFFFF; color: #7C3AED; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 0.775rem; border: 1px solid #F3E8FF;">{cred_hint}</code>
             </div>
@@ -1175,7 +1243,7 @@ if not st.session_state["logged_in"]:
                 else:
                     st.error("Invalid username or password.")
 
-        # 4. Footer & Security Compliance Notice
+        # 4. Footer & Security Compliance Notice (Centered)
         st.markdown(
             clean_html(f"""
             <div style="text-align: center; font-size: 0.775rem; color: #64748B; margin-top: 22px; border-top: 1px solid #F1F5F9; padding-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px;">
