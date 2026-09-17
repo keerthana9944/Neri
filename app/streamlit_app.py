@@ -411,11 +411,34 @@ st.markdown(
             box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18) !important;
         }
 
-        /* SIDEBAR DESIGN SYSTEM */
-        section[data-testid="stSidebar"] {
+        /* PERMANENT VISIBLE SIDEBAR SYSTEM */
+        section[data-testid="stSidebar"],
+        section[aria-label="sidebar"] {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            transform: none !important;
+            margin-left: 0 !important;
+            left: 0 !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            height: 100vh !important;
+            width: 260px !important;
+            min-width: 260px !important;
+            max-width: 260px !important;
             background: linear-gradient(180deg, #130924 0%, #0F172A 100%) !important;
             border-right: 1px solid #1E293B !important;
             box-sizing: border-box !important;
+            z-index: 99999 !important;
+            position: fixed !important;
+        }
+
+        /* Ensure Main Content Container is cleanly offset by 260px */
+        [data-testid="stMain"],
+        section.main,
+        div.main {
+            margin-left: 260px !important;
+            width: calc(100% - 260px) !important;
         }
 
         /* Completely Hide Scrollbars on Sidebar */
