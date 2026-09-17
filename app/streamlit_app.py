@@ -412,12 +412,14 @@ st.markdown(
         }
 
         /* STRICT FIXED SIDEBAR SYSTEM (NO FLEXIBLE RESIZING) */
-        section[data-testid="stSidebar"],
-        section[data-testid="stSidebar"] > div:first-child,
-        div[data-testid="stSidebarNav"] {
+        /* STRICT FIXED SIDEBAR SYSTEM (EXPANDED VS COLLAPSED SAFE) */
+        section[data-testid="stSidebar"]:not([aria-expanded="false"]) {
             width: 260px !important;
             min-width: 260px !important;
             max-width: 260px !important;
+        }
+
+        section[data-testid="stSidebar"] {
             background: linear-gradient(180deg, #130924 0%, #0F172A 100%) !important;
             border-right: 1px solid #1E293B !important;
             box-sizing: border-box !important;
@@ -478,10 +480,15 @@ st.markdown(
             box-sizing: border-box;
         }
 
-        /* Streamlit Header & Sidebar Toggle Controls Styling */
+        /* Streamlit Header & Transparent Click-Through Overlay */
         header[data-testid="stHeader"] {
             background-color: transparent !important;
             z-index: 99999 !important;
+            pointer-events: none !important;
+        }
+
+        header[data-testid="stHeader"] * {
+            pointer-events: auto !important;
         }
 
         #MainMenu, footer {
@@ -489,34 +496,57 @@ st.markdown(
             height: 0px !important;
         }
 
-        /* Streamlit Collapsed Sidebar Control */
+        /* Streamlit Collapsed & Expanded Sidebar Control Button */
         [data-testid="stSidebarCollapsedControl"],
+        div[data-testid="stSidebarCollapsedControl"],
         button[data-testid="stSidebarCollapsedControl"],
-        [data-testid="stSidebarHeaderExpandButton"] {
+        [data-testid="stSidebarHeaderExpandButton"],
+        button[aria-label="Expand sidebar"],
+        button[aria-label="Open sidebar"],
+        button[aria-label="Collapse sidebar"],
+        button[aria-label="Close sidebar"] {
             position: fixed !important;
-            top: 14px !important;
-            left: 14px !important;
-            z-index: 999999 !important;
+            top: 12px !important;
+            left: 12px !important;
+            z-index: 9999999 !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            width: 38px !important;
-            height: 38px !important;
-            background-color: #0F172A !important;
-            color: #A78BFA !important;
-            border: 1px solid #1E293B !important;
+            width: 42px !important;
+            height: 42px !important;
+            background-color: #7C3AED !important;
+            color: #FFFFFF !important;
+            border: 1.5px solid #8B5CF6 !important;
             border-radius: 10px !important;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.45) !important;
             cursor: pointer !important;
-            transition: all 0.2s ease !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
         [data-testid="stSidebarCollapsedControl"]:hover,
         button[data-testid="stSidebarCollapsedControl"]:hover,
-        [data-testid="stSidebarHeaderExpandButton"]:hover {
-            background-color: #1E293B !important;
+        [data-testid="stSidebarHeaderExpandButton"]:hover,
+        button[aria-label="Expand sidebar"]:hover,
+        button[aria-label="Open sidebar"]:hover {
+            background-color: #6D28D9 !important;
             color: #FFFFFF !important;
-            border-color: #7C3AED !important;
+            transform: scale(1.08) translateY(-1px) !important;
+            box-shadow: 0 8px 22px rgba(124, 58, 237, 0.6) !important;
+        }
+
+        [data-testid="stSidebarCollapsedControl"] *,
+        button[data-testid="stSidebarCollapsedControl"] *,
+        [data-testid="stSidebarHeaderExpandButton"] *,
+        button[aria-label="Expand sidebar"] *,
+        button[aria-label="Open sidebar"] * {
+            color: #FFFFFF !important;
+            fill: #FFFFFF !important;
+            stroke: #FFFFFF !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         /* Custom Cards & Containers with Animation & Scale Hover */
