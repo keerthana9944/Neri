@@ -2317,7 +2317,7 @@ elif selected_nav == "Documents":
     if user_role == "Supervisor":
         with st.expander("Add Approved Documentation", expanded=False):
             with st.form("doc_upload_form"):
-                st.subheader("Upload Approved Documentation")
+                st.markdown("<h3 style='color: #0284C7;'>Upload Approved Documentation</h3>", unsafe_allow_html=True)
 
                 doc_type = st.selectbox("Document Type", ["Manual", "Maintenance Log", "Safety Procedure"])
 
