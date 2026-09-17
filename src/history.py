@@ -409,6 +409,13 @@ def auto_seed_if_empty():
                 if file_path.name not in indexed_filenames:
                     needed_files.append((file_path, doc_type))
 
+    uploads_dir = BASE_DIR / "uploads"
+    if uploads_dir.exists():
+        for file_path in uploads_dir.iterdir():
+            if file_path.is_file() and file_path.name not in indexed_filenames:
+                if file_path.suffix.lower() in [".pdf", ".txt"]:
+                    needed_files.append((file_path, "maintenance_log"))
+
     if not needed_files:
         return
 

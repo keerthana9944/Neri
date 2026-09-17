@@ -2396,15 +2396,20 @@ elif selected_nav == "Documents":
     if docs:
         if search_query.strip():
             q = search_query.strip().lower()
-            q_terms = [q]
-            if "safety procedure" in q:
-                q_terms.append(q.replace("safety procedure", "safety"))
+            words = [w for w in q.split() if len(w) > 1]
 
             def matches_query(d):
                 fn = (d.get("filename", "") or "").lower()
                 mc = (d.get("machine", "") or "").lower()
                 dt = (d.get("document_type", "") or "").lower()
-                return any(term in fn or term in mc or term in dt for term in q_terms)
+                combined = f"{fn} {mc} {dt}"
+                if q in combined:
+                    return True
+                for w in words:
+                    stem = w[:4] if len(w) >= 4 else w
+                    if stem in combined:
+                        return True
+                return False
 
             docs = [d for d in docs if matches_query(d)]
 
