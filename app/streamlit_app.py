@@ -353,18 +353,39 @@ st.markdown(
             color-scheme: light !important;
         }
 
-        /* Streamlit Form Input & Selectbox Styling */
+        /* FORCE ALL WIDGET LABELS TO CRISP BLACK */
+        label,
+        [data-testid="stWidgetLabel"],
+        [data-testid="stWidgetLabel"] p,
+        [data-testid="stWidgetLabel"] span,
+        [data-testid="stWidgetLabel"] label,
+        div[data-testid="stWidgetLabel"] *,
+        .stWidgetLabel,
+        .stWidgetLabel p,
+        .stWidgetLabel label {
+            color: #000000 !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem !important;
+            opacity: 1 !important;
+        }
+
+        /* Streamlit Form Inputs, Selectboxes, File Uploaders & TextAreas — WHITE BACKGROUND & VIOLET OUTLINE */
         div[data-baseweb="input"],
         div[data-baseweb="base-input"],
         div[data-baseweb="select"],
         div[data-baseweb="select"] > div,
         div[data-baseweb="select"] [role="button"],
-        textarea[data-testid="stTextArea"] {
+        textarea[data-testid="stTextArea"],
+        section[data-testid="stFileUploaderDropzone"],
+        div[data-testid="stFileUploaderDropzone"],
+        [data-testid="stFileUploader"] section,
+        [data-testid="stFileUploader"] div[data-testid="stFileUploaderDropzone"],
+        div[data-baseweb="file-uploader"] {
             background-color: #FFFFFF !important;
-            border: 1px solid #CBD5E1 !important;
-            border-radius: 10px !important;
+            border: 1.5px solid #7C3AED !important;
+            border-radius: 12px !important;
             color: #0F172A !important;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08) !important;
             transition: all 0.2s ease-in-out !important;
         }
 
@@ -378,24 +399,51 @@ st.markdown(
 
         div[data-baseweb="input"] input::placeholder,
         textarea[data-testid="stTextArea"]::placeholder {
-            color: #94A3B8 !important;
+            color: #64748B !important;
             opacity: 1 !important;
         }
 
         div[data-baseweb="select"] span,
         div[data-baseweb="select"] div,
+        div[data-baseweb="select"] p,
         div[data-baseweb="select"] svg {
             color: #0F172A !important;
             fill: #0F172A !important;
+        }
+
+        /* File Uploader Dropzone Text & Buttons */
+        section[data-testid="stFileUploaderDropzone"] *,
+        div[data-testid="stFileUploaderDropzone"] *,
+        [data-testid="stFileUploader"] span,
+        [data-testid="stFileUploader"] small,
+        [data-testid="stFileUploader"] p {
+            color: #0F172A !important;
+        }
+
+        section[data-testid="stFileUploaderDropzone"] button,
+        div[data-testid="stFileUploaderDropzone"] button,
+        [data-testid="stFileUploader"] button {
+            background-color: #F3E8FF !important;
+            color: #7C3AED !important;
+            border: 1px solid #7C3AED !important;
+            border-radius: 8px !important;
+            font-weight: 700 !important;
+        }
+
+        section[data-testid="stFileUploaderDropzone"] button:hover,
+        div[data-testid="stFileUploaderDropzone"] button:hover,
+        [data-testid="stFileUploader"] button:hover {
+            background-color: #7C3AED !important;
+            color: #FFFFFF !important;
         }
 
         /* Selectbox Popover Options List */
         ul[data-baseweb="menu"],
         div[data-baseweb="popover"] {
             background-color: #FFFFFF !important;
-            border: 1px solid #CBD5E1 !important;
-            border-radius: 10px !important;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15) !important;
+            border: 1.5px solid #7C3AED !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.15) !important;
         }
 
         ul[data-baseweb="menu"] li,
@@ -406,9 +454,13 @@ st.markdown(
 
         div[data-baseweb="select"]:focus-within > div,
         div[data-baseweb="input"]:focus-within > div,
-        textarea[data-testid="stTextArea"]:focus {
+        div[data-baseweb="input"]:focus-within,
+        textarea[data-testid="stTextArea"]:focus,
+        section[data-testid="stFileUploaderDropzone"]:focus-within,
+        div[data-testid="stFileUploaderDropzone"]:focus-within {
             border-color: #7C3AED !important;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18) !important;
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.22) !important;
+            background-color: #FFFFFF !important;
         }
 
         /* DYNAMIC LAYOUT CONTAINER CONTROL */
