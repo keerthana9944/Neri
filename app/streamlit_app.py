@@ -2384,11 +2384,30 @@ elif selected_nav == "Documents":
 
         if search_query.strip():
             q = search_query.strip().lower()
-            docs = [d for d in docs if q in (d.get("filename", "") or "").lower() or q in (d.get("machine", "") or "").lower() or q in (d.get("document_type", "") or "").lower()]
+            q_terms = [q]
+            if "safety procedure" in q:
+                q_terms.append(q.replace("safety procedure", "safety"))
+
+            def matches_query(d):
+                fn = (d.get("filename", "") or "").lower()
+                mc = (d.get("machine", "") or "").lower()
+                dt = (d.get("document_type", "") or "").lower()
+                return any(term in fn or term in mc or term in dt for term in q_terms)
+
+            docs = [d for d in docs if matches_query(d)]
 
         if type_filter != "All Types":
-            tf_slug = type_filter.lower().replace(" ", "_")
-            docs = [d for d in docs if tf_slug in str(d.get("document_type", "")).lower() or type_filter.lower() in str(d.get("document_type", "")).lower()]
+            filter_type_map = {
+                "Manual": "manual",
+                "Maintenance Log": "maintenance_log",
+                "Safety Procedure": "safety",
+            }
+            target_type = filter_type_map.get(type_filter, type_filter.lower().replace(" ", "_"))
+            docs = [
+                d for d in docs
+                if target_type in str(d.get("document_type", "")).lower()
+                or str(d.get("document_type", "")).lower() in target_type
+            ]
 
         if not docs:
             st.info("No matching documents found in knowledge base.")
