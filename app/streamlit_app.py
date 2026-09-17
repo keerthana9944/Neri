@@ -411,14 +411,7 @@ st.markdown(
             box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18) !important;
         }
 
-        /* STRICT FIXED SIDEBAR SYSTEM (NO FLEXIBLE RESIZING) */
-        /* STRICT FIXED SIDEBAR SYSTEM (EXPANDED VS COLLAPSED SAFE) */
-        section[data-testid="stSidebar"]:not([aria-expanded="false"]) {
-            width: 260px !important;
-            min-width: 260px !important;
-            max-width: 260px !important;
-        }
-
+        /* SIDEBAR DESIGN SYSTEM */
         section[data-testid="stSidebar"] {
             background: linear-gradient(180deg, #130924 0%, #0F172A 100%) !important;
             border-right: 1px solid #1E293B !important;
@@ -444,15 +437,14 @@ st.markdown(
             scrollbar-width: none !important;
         }
 
-        /* Disable Streamlit drag-to-resize handle completely */
+        /* Disable Streamlit drag-to-resize handle */
         [data-testid="stSidebarResizer"] {
             display: none !important;
             width: 0px !important;
             pointer-events: none !important;
-            visibility: hidden !important;
         }
 
-        /* Prevent inner element horizontal overflow or clipping */
+        /* Prevent inner element horizontal overflow */
         section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"],
         section[data-testid="stSidebar"] [data-testid="stVerticalBlock"],
         section[data-testid="stSidebar"] div.stElementContainer {
@@ -470,7 +462,7 @@ st.markdown(
             color: #F8FAFC !important;
         }
 
-        /* Remove Streamlit default white outlined button boxes in sidebar */
+        /* Remove default white outlined button boxes in sidebar */
         section[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"],
         section[data-testid="stSidebar"] div.stButton > button {
             background-color: transparent;
@@ -480,15 +472,10 @@ st.markdown(
             box-sizing: border-box;
         }
 
-        /* Streamlit Header & Transparent Click-Through Overlay */
+        /* Streamlit Header */
         header[data-testid="stHeader"] {
             background-color: transparent !important;
-            z-index: 99999 !important;
-            pointer-events: none !important;
-        }
-
-        header[data-testid="stHeader"] * {
-            pointer-events: auto !important;
+            z-index: 99 !important;
         }
 
         #MainMenu, footer {
@@ -496,57 +483,25 @@ st.markdown(
             height: 0px !important;
         }
 
-        /* Streamlit Collapsed & Expanded Sidebar Control Button */
+        /* Streamlit Collapsed Sidebar Toggle Button (Visible when sidebar is closed) */
         [data-testid="stSidebarCollapsedControl"],
-        div[data-testid="stSidebarCollapsedControl"],
         button[data-testid="stSidebarCollapsedControl"],
-        [data-testid="stSidebarHeaderExpandButton"],
-        button[aria-label="Expand sidebar"],
-        button[aria-label="Open sidebar"],
-        button[aria-label="Collapse sidebar"],
-        button[aria-label="Close sidebar"] {
-            position: fixed !important;
-            top: 12px !important;
-            left: 12px !important;
-            z-index: 9999999 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            width: 42px !important;
-            height: 42px !important;
+        [data-testid="stSidebarHeaderExpandButton"] {
+            z-index: 999999 !important;
             background-color: #7C3AED !important;
             color: #FFFFFF !important;
-            border: 1.5px solid #8B5CF6 !important;
-            border-radius: 10px !important;
-            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.45) !important;
+            border: 1px solid #8B5CF6 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35) !important;
             cursor: pointer !important;
             visibility: visible !important;
             opacity: 1 !important;
-            pointer-events: auto !important;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
-        [data-testid="stSidebarCollapsedControl"]:hover,
-        button[data-testid="stSidebarCollapsedControl"]:hover,
-        [data-testid="stSidebarHeaderExpandButton"]:hover,
-        button[aria-label="Expand sidebar"]:hover,
-        button[aria-label="Open sidebar"]:hover {
-            background-color: #6D28D9 !important;
-            color: #FFFFFF !important;
-            transform: scale(1.08) translateY(-1px) !important;
-            box-shadow: 0 8px 22px rgba(124, 58, 237, 0.6) !important;
-        }
-
-        [data-testid="stSidebarCollapsedControl"] *,
-        button[data-testid="stSidebarCollapsedControl"] *,
-        [data-testid="stSidebarHeaderExpandButton"] *,
-        button[aria-label="Expand sidebar"] *,
-        button[aria-label="Open sidebar"] * {
+        [data-testid="stSidebarCollapsedControl"] * {
             color: #FFFFFF !important;
             fill: #FFFFFF !important;
             stroke: #FFFFFF !important;
-            visibility: visible !important;
-            opacity: 1 !important;
         }
 
         /* Custom Cards & Containers with Animation & Scale Hover */
