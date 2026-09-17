@@ -2262,7 +2262,7 @@ elif selected_nav == "Documents":
         clean_html("""
         <div style="margin-bottom: 20px;">
             <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px;">KNOWLEDGE BASE CENTER</div>
-            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 2px 0 4px 0;">Approved Documentation Management</h3>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0284C7; margin: 2px 0 4px 0;">Approved Documentation Management</h3>
             <p style="font-size: 0.875rem; color: #64748B; margin: 0;">
                 Manage approved manuals, maintenance logs, and safety procedures used by Neri.
             </p>
