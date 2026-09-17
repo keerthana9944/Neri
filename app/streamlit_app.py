@@ -289,20 +289,20 @@ st.markdown(
 
         @keyframes pulseGlow {
             0% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6);
+                box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.6);
             }
             70% {
-                box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+                box-shadow: 0 0 0 10px rgba(2, 132, 199, 0);
             }
             100% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+                box-shadow: 0 0 0 0 rgba(2, 132, 199, 0);
             }
         }
 
         @keyframes borderGlow {
-            0% { border-color: rgba(220, 38, 38, 0.2); }
-            50% { border-color: rgba(220, 38, 38, 0.8); }
-            100% { border-color: rgba(220, 38, 38, 0.2); }
+            0% { border-color: rgba(2, 132, 199, 0.2); }
+            50% { border-color: rgba(2, 132, 199, 0.8); }
+            100% { border-color: rgba(2, 132, 199, 0.2); }
         }
 
         html, body, [class*="css"] {
@@ -316,7 +316,7 @@ st.markdown(
         }
 
         .stApp {
-            background: radial-gradient(circle at 50% -20%, #FFF1F2 0%, #F1F5F9 55%, #F8FAFC 100%) !important;
+            background: radial-gradient(circle at 50% -20%, #E0F2FE 0%, #F1F5F9 55%, #F8FAFC 100%) !important;
             background-attachment: fixed !important;
         }
 
@@ -327,24 +327,24 @@ st.markdown(
             animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) ease-out;
         }
 
-        /* Streamlit Primary Buttons — Gradient Cyber Blue #DC2626 -> #F43F5E */
+        /* Streamlit Primary Buttons — Gradient Cyber Blue #0284C7 -> #06B6D4 */
         div.stButton > button[kind="primary"],
         button[data-testid="baseButton-primary"] {
-            background: linear-gradient(135deg, #DC2626 0%, #F43F5E 100%) !important;
+            background: linear-gradient(135deg, #0284C7 0%, #06B6D4 100%) !important;
             color: #FFFFFF !important;
             border-radius: 10px !important;
             border: none !important;
             font-weight: 700 !important;
             padding: 10px 22px !important;
-            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35) !important;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
             letter-spacing: 0.2px;
         }
 
         div.stButton > button[kind="primary"]:hover,
         button[data-testid="baseButton-primary"]:hover {
-            background: linear-gradient(135deg, #B91C1C 0%, #B91C1C 100%) !important;
-            box-shadow: 0 8px 22px rgba(244, 63, 94, 0.45) !important;
+            background: linear-gradient(135deg, #0369A1 0%, #0369A1 100%) !important;
+            box-shadow: 0 8px 22px rgba(6, 182, 212, 0.45) !important;
             transform: translateY(-2px) scale(1.01);
         }
 
@@ -407,8 +407,8 @@ st.markdown(
         div[data-baseweb="select"]:focus-within > div,
         div[data-baseweb="input"]:focus-within > div,
         textarea[data-testid="stTextArea"]:focus {
-            border-color: #DC2626 !important;
-            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18) !important;
+            border-color: #0284C7 !important;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18) !important;
         }
 
         /* STRICT FIXED SIDEBAR SYSTEM (NO FLEXIBLE RESIZING) */
@@ -418,7 +418,7 @@ st.markdown(
             width: 260px !important;
             min-width: 260px !important;
             max-width: 260px !important;
-            background: linear-gradient(180deg, #180509 0%, #0F172A 100%) !important;
+            background: linear-gradient(180deg, #070D15 0%, #0F172A 100%) !important;
             border-right: 1px solid #1E293B !important;
             box-sizing: border-box !important;
         }
@@ -503,7 +503,7 @@ st.markdown(
             width: 38px !important;
             height: 38px !important;
             background-color: #0F172A !important;
-            color: #FB7185 !important;
+            color: #38BDF8 !important;
             border: 1px solid #1E293B !important;
             border-radius: 10px !important;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
@@ -516,7 +516,7 @@ st.markdown(
         [data-testid="stSidebarHeaderExpandButton"]:hover {
             background-color: #1E293B !important;
             color: #FFFFFF !important;
-            border-color: #DC2626 !important;
+            border-color: #0284C7 !important;
         }
 
         /* Custom Cards & Containers with Animation & Scale Hover */
@@ -533,7 +533,7 @@ st.markdown(
 
         .neri-card:hover {
             box-shadow: 0 12px 30px -4px rgba(15, 23, 42, 0.1);
-            border-color: #FECDD3;
+            border-color: #BAE6FD;
             transform: translateY(-2px);
         }
 
@@ -575,9 +575,9 @@ st.markdown(
             border-radius: 12px;
             border: 1px solid #FCA5A5;
             background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-            color: #991B1B;
+            color: #0891B2;
             margin-bottom: 20px;
-            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.12);
+            box-shadow: 0 4px 16px rgba(2, 132, 199, 0.12);
             animation: fadeInUp 0.4s ease-out;
         }
 
@@ -588,7 +588,7 @@ st.markdown(
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #DC2626;
+            color: #0284C7;
         }
 
         .success-box {
@@ -610,7 +610,7 @@ st.markdown(
         }
 
         .source-box:hover {
-            border-color: #FB7185;
+            border-color: #38BDF8;
             transform: translateX(4px);
         }
 
@@ -625,8 +625,8 @@ st.markdown(
         }
 
         .document-box:hover {
-            border-color: #DC2626;
-            box-shadow: 0 6px 18px rgba(220, 38, 38, 0.08);
+            border-color: #0284C7;
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.08);
         }
 
         /* Numbered Badges & Workflow Steps */
@@ -646,7 +646,7 @@ st.markdown(
         }
 
         .neri-badge-num {
-            background: linear-gradient(135deg, #0F172A 0%, #DC2626 100%);
+            background: linear-gradient(135deg, #0F172A 0%, #0284C7 100%);
             color: #FFFFFF;
             font-size: 0.85rem;
             font-weight: 800;
@@ -657,7 +657,7 @@ st.markdown(
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 3px 10px rgba(220, 38, 38, 0.25);
+            box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
         }
 
         /* Scope main content secondary buttons */
@@ -671,9 +671,9 @@ st.markdown(
         }
 
         section[data-testid="stMain"] .stButton button[kind="secondary"]:hover {
-            border-color: #DC2626 !important;
-            background-color: #FFF1F2 !important;
-            color: #DC2626 !important;
+            border-color: #0284C7 !important;
+            background-color: #E0F2FE !important;
+            color: #0284C7 !important;
             transform: translateY(-1px);
         }
 
@@ -692,9 +692,9 @@ st.markdown(
         }
 
         .status-pill.active {
-            background-color: #FFF1F2;
-            color: #DC2626;
-            border: 1px solid #FECDD3;
+            background-color: #E0F2FE;
+            color: #0284C7;
+            border: 1px solid #BAE6FD;
         }
 
         .status-pill.warning {
@@ -705,7 +705,7 @@ st.markdown(
 
         .status-pill.error {
             background-color: #FEF2F2;
-            color: #B91C1C;
+            color: #0369A1;
             border: 1px solid #FCA5A5;
         }
 
@@ -722,8 +722,8 @@ st.markdown(
         }
 
         div[data-testid="stExpander"]:hover {
-            border-color: #DC2626 !important;
-            box-shadow: 0 6px 18px rgba(220, 38, 38, 0.12) !important;
+            border-color: #0284C7 !important;
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.12) !important;
         }
 
         div[data-testid="stExpander"] details summary,
@@ -739,7 +739,7 @@ st.markdown(
         div[data-testid="stExpander"] details summary:hover,
         div[data-testid="stExpander"] [data-testid="stExpanderSummary"]:hover,
         .streamlit-expanderHeader:hover {
-            background-color: #FFF1F2 !important;
+            background-color: #E0F2FE !important;
         }
 
         /* FORCE ALL TEXT IN EXPANDER SUMMARY HEADERS TO CRISP #0F172A */
@@ -758,8 +758,8 @@ st.markdown(
 
         div[data-testid="stExpander"] details summary svg,
         div[data-testid="stExpander"] [data-testid="stExpanderSummary"] svg {
-            color: #DC2626 !important;
-            fill: #DC2626 !important;
+            color: #0284C7 !important;
+            fill: #0284C7 !important;
         }
     </style>
     """),
@@ -780,7 +780,7 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
             clean_html(f"""
             <div style="display: flex; align-items: center; gap: 24px; margin-top: 8px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    {get_svg_icon("logo", color="#F43F5E", size=26)}
+                    {get_svg_icon("logo", color="#06B6D4", size=26)}
                     <span style="font-size: 1.35rem; font-weight: 800; color: #0F172A; letter-spacing: -0.5px;">NERI</span>
                     <span style="font-size: 0.8rem; font-weight: 600; color: #64748B; border-left: 1px solid #CBD5E1; padding-left: 10px;">Maintenance Intelligence</span>
                 </div>
@@ -803,13 +803,13 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     # Hero Section Banner (Dark Cyber Industrial Theme)
     st.markdown(
         clean_html(f"""
-        <div style="background: linear-gradient(135deg, #180509 0%, #0F172A 100%); border-radius: 16px; padding: 48px 40px; margin-bottom: 40px; border: 1px solid #1E293B; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);">
+        <div style="background: linear-gradient(135deg, #070D15 0%, #0F172A 100%); border-radius: 16px; padding: 48px 40px; margin-bottom: 40px; border: 1px solid #1E293B; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);">
             <div style="max-width: 780px;">
-                <div style="font-size: 0.775rem; font-weight: 700; color: #FB7185; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
-                    {get_svg_icon("shield-check", color="#F43F5E", size=16)} AI MAINTENANCE INTELLIGENCE
+                <div style="font-size: 0.775rem; font-weight: 700; color: #38BDF8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                    {get_svg_icon("shield-check", color="#06B6D4", size=16)} AI MAINTENANCE INTELLIGENCE
                 </div>
                 <h1 style="font-size: 2.75rem; font-weight: 800; color: #FFFFFF; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 18px;">
-                    Resolve machine problems<br><span style="background: linear-gradient(135deg, #FB7185 0%, #F43F5E 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">with grounded intelligence.</span>
+                    Resolve machine problems<br><span style="background: linear-gradient(135deg, #38BDF8 0%, #06B6D4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">with grounded intelligence.</span>
                 </h1>
                 <p style="font-size: 1.05rem; line-height: 1.6; color: #94A3B8; margin-bottom: 28px; max-width: 640px;">
                     Neri helps maintenance teams troubleshoot industrial equipment using approved machine manuals, maintenance records, and safety procedures.
@@ -824,7 +824,7 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     st.markdown(
         clean_html(f"""
         <div style="margin-bottom: 40px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #DC2626; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
                 TECHNICAL DIAGNOSTIC PREVIEW
             </div>
             <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 28px; box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.06);">
@@ -837,12 +837,12 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
                         </div>
                     </div>
                     <span class="status-pill active">
-                        {get_svg_icon("shield-check", color="#DC2626", size=14)} Grounded in Documentation
+                        {get_svg_icon("shield-check", color="#0284C7", size=14)} Grounded in Documentation
                     </span>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
-                    <div style="background-color: #FFF1F2; border-radius: 10px; padding: 16px; border-left: 4px solid #DC2626;">
+                    <div style="background-color: #E0F2FE; border-radius: 10px; padding: 16px; border-left: 4px solid #0284C7;">
                         <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Observed Problem</div>
                         <div style="font-size: 0.9rem; font-weight: 700; color: #0F172A; margin-top: 4px;">Pressure dropping under load</div>
                     </div>
@@ -857,8 +857,8 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
                     </div>
 
                     <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px;">
-                        <div style="font-size: 0.75rem; font-weight: 700; color: #DC2626; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
-                            {get_svg_icon("document", color="#DC2626", size=14)} Source Reference
+                        <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                            {get_svg_icon("document", color="#0284C7", size=14)} Source Reference
                         </div>
                         <div style="font-size: 0.825rem; color: #0F172A; font-weight: 600; margin-top: 4px;">Hydraulic System Manual v2.1</div>
                         <div style="font-size: 0.75rem; color: #64748B; margin-top: 2px;">Section 4.2 &bull; Page 34</div>
@@ -877,7 +877,7 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
         st.markdown(
             clean_html(f"""
             <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
-                {get_svg_icon("document", color="#DC2626", size=22)}
+                {get_svg_icon("document", color="#0284C7", size=22)}
                 <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">GROUNDED</div>
                 <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Answers are based on approved maintenance documentation.</div>
             </div>
@@ -889,7 +889,7 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
         st.markdown(
             clean_html(f"""
             <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
-                {get_svg_icon("shield-check", color="#DC2626", size=22)}
+                {get_svg_icon("shield-check", color="#0284C7", size=22)}
                 <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">SAFETY-AWARE</div>
                 <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Safety procedures remain part of the troubleshooting workflow.</div>
             </div>
@@ -901,7 +901,7 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
         st.markdown(
             clean_html(f"""
             <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
-                {get_svg_icon("search", color="#DC2626", size=22)}
+                {get_svg_icon("search", color="#0284C7", size=22)}
                 <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">TRACEABLE</div>
                 <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Responses are connected to explicit source references.</div>
             </div>
@@ -913,7 +913,7 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
         st.markdown(
             clean_html(f"""
             <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px; height: 100%; transition: all 0.25s ease;" class="neri-card">
-                {get_svg_icon("factory", color="#DC2626", size=22)}
+                {get_svg_icon("factory", color="#0284C7", size=22)}
                 <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 10px 0 4px 0;">BUILT FOR MAINTENANCE</div>
                 <div style="font-size: 0.825rem; color: #64748B; line-height: 1.45;">Designed around real manufacturing troubleshooting workflows.</div>
             </div>
@@ -926,7 +926,7 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
     # Final Action CTA
     st.markdown(
         clean_html(f"""
-        <div style="background: linear-gradient(135deg, #180509 0%, #0F172A 100%); color: #FFFFFF; border-radius: 14px; padding: 40px; text-align: center; margin-bottom: 36px; border: 1px solid #1E293B;">
+        <div style="background: linear-gradient(135deg, #070D15 0%, #0F172A 100%); color: #FFFFFF; border-radius: 14px; padding: 40px; text-align: center; margin-bottom: 36px; border: 1px solid #1E293B;">
             <h2 style="font-size: 1.85rem; font-weight: 800; color: #FFFFFF; margin: 0 0 10px 0;">
                 Ready to troubleshoot?
             </h2>
@@ -951,7 +951,7 @@ if not st.session_state["logged_in"] and st.session_state.get("show_landing_page
         clean_html(f"""
         <div style="text-align: center; border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 48px; color: #64748B; font-size: 0.825rem;">
             <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 6px;">
-                {get_svg_icon("logo", color="#DC2626", size=18)}
+                {get_svg_icon("logo", color="#0284C7", size=18)}
                 <strong style="color: #0F172A;">NERI Maintenance Intelligence</strong>
             </div>
             Authorized Industrial Operations Platform. Grounded in approved plant documentation.
@@ -990,15 +990,15 @@ if not st.session_state["logged_in"]:
         }
         div.stButton > button[key="login_back_home"]:hover {
             background-color: #FFFFFF !important;
-            color: #DC2626 !important;
-            border-color: #DC2626 !important;
+            color: #0284C7 !important;
+            border-color: #0284C7 !important;
             transform: translateY(-1px);
         }
 
         /* Glassmorphic Login Card Column Wrapper */
         div[data-testid="column"]:has(button[key="quick_tech_login"]) {
             background: rgba(255, 255, 255, 0.92) !important;
-            border: 1px solid rgba(220, 38, 38, 0.2) !important;
+            border: 1px solid rgba(2, 132, 199, 0.2) !important;
             border-radius: 24px !important;
             padding: 40px 36px !important;
             box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.8) inset !important;
@@ -1030,8 +1030,8 @@ if not st.session_state["logged_in"]:
 
         div[data-testid="column"]:has(button[key="quick_tech_login"]) [data-testid="stForm"] input:focus {
             background-color: #FFFFFF !important;
-            border-color: #DC2626 !important;
-            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18) !important;
+            border-color: #0284C7 !important;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18) !important;
         }
 
         /* Segmented Role Selector Buttons */
@@ -1053,7 +1053,7 @@ if not st.session_state["logged_in"]:
         st.markdown(
             clean_html(f"""
             <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
-                {get_svg_icon("logo", color="#F43F5E", size=22)}
+                {get_svg_icon("logo", color="#06B6D4", size=22)}
                 <span style="font-size: 1.1rem; font-weight: 800; color: #0F172A; letter-spacing: -0.3px;">NERI</span>
                 <span style="font-size: 0.775rem; font-weight: 600; color: #64748B;">Maintenance Portal</span>
             </div>
@@ -1077,8 +1077,8 @@ if not st.session_state["logged_in"]:
         st.markdown(
             clean_html(f"""
             <div style="text-align: center; margin-bottom: 24px;">
-                <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(244, 63, 94, 0.2) 100%); border: 1px solid rgba(244, 63, 94, 0.4); border-radius: 18px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(244, 63, 94, 0.25);">
-                    {get_svg_icon("logo", color="#DC2626", size=32)}
+                <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, rgba(2, 132, 199, 0.1) 0%, rgba(6, 182, 212, 0.2) 100%); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 18px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(6, 182, 212, 0.25);">
+                    {get_svg_icon("logo", color="#0284C7", size=32)}
                 </div>
                 <h2 style="font-size: 1.6rem; font-weight: 800; color: #0F172A; margin: 0 0 6px 0; letter-spacing: -0.02em;">Welcome to Neri</h2>
                 <div style="font-size: 0.875rem; color: #64748B; line-height: 1.5;">Grounded AI Maintenance & Equipment Intelligence</div>
@@ -1119,9 +1119,9 @@ if not st.session_state["logged_in"]:
         cred_hint = "technician / tech123" if selected_role == "Technician" else "supervisor / super123"
         st.markdown(
             clean_html(f"""
-            <div style="background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 8px; padding: 8px 12px; margin: 12px 0 16px 0; font-size: 0.775rem; color: #B91C1C; display: flex; align-items: center; justify-content: space-between;">
+            <div style="background: #E0F2FE; border: 1px solid #BAE6FD; border-radius: 8px; padding: 8px 12px; margin: 12px 0 16px 0; font-size: 0.775rem; color: #0369A1; display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-weight: 600;">Demo credentials:</span>
-                <code style="background: #FFFFFF; color: #DC2626; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 0.775rem; border: 1px solid #FFF1F2;">{cred_hint}</code>
+                <code style="background: #FFFFFF; color: #0284C7; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 0.775rem; border: 1px solid #E0F2FE;">{cred_hint}</code>
             </div>
             """),
             unsafe_allow_html=True
@@ -1171,7 +1171,7 @@ if not st.session_state["logged_in"]:
         st.markdown(
             clean_html(f"""
             <div style="text-align: center; font-size: 0.775rem; color: #64748B; margin-top: 22px; border-top: 1px solid #F1F5F9; padding-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                {get_svg_icon("shield-check", color="#DC2626", size=14)}
+                {get_svg_icon("shield-check", color="#0284C7", size=14)}
                 <span>Authorized Manufacturing Operations Portal</span>
             </div>
             """),
@@ -1230,17 +1230,17 @@ with st.sidebar:
         clean_html(f"""
         <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.35); border-radius: 10px; padding: 7px; display: flex; align-items: center; justify-content: center;">
-                    {get_svg_icon("logo", color="#F43F5E", size=24)}
+                <div style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.35); border-radius: 10px; padding: 7px; display: flex; align-items: center; justify-content: center;">
+                    {get_svg_icon("logo", color="#06B6D4", size=24)}
                 </div>
                 <div>
                     <div style="font-size: 1.25rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.5px; line-height: 1.1;">NERI</div>
-                    <div style="font-size: 0.7rem; font-weight: 600; color: #FB7185; margin-top: 2px;">Maintenance AI</div>
+                    <div style="font-size: 0.7rem; font-weight: 600; color: #38BDF8; margin-top: 2px;">Maintenance AI</div>
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 5px; background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.25); border-radius: 20px; padding: 3px 8px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #F43F5E; box-shadow: 0 0 8px #F43F5E; animation: pulseGlow 2s infinite;"></span>
-                <span style="font-size: 0.65rem; font-weight: 700; color: #FB7185; letter-spacing: 0.5px;">ONLINE</span>
+            <div style="display: flex; align-items: center; gap: 5px; background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: 20px; padding: 3px 8px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #06B6D4; box-shadow: 0 0 8px #06B6D4; animation: pulseGlow 2s infinite;"></span>
+                <span style="font-size: 0.65rem; font-weight: 700; color: #38BDF8; letter-spacing: 0.5px;">ONLINE</span>
             </div>
         </div>
         """),
@@ -1292,7 +1292,7 @@ with st.sidebar:
     sidebar_css = [
         """
         section[data-testid="stSidebar"] {
-            background: linear-gradient(180deg, #180509 0%, #0F172A 100%) !important;
+            background: linear-gradient(180deg, #070D15 0%, #0F172A 100%) !important;
             border-right: 1px solid #1E293B !important;
         }
         section[data-testid="stSidebar"] [data-testid="stSidebarNav"] {
@@ -1336,11 +1336,11 @@ with st.sidebar:
         section[data-testid="stSidebar"] div#nav_btn_{item} button,
         section[data-testid="stSidebar"] div[id*="nav_btn_{item}"] button,
         section[data-testid="stSidebar"] button[key="nav_btn_{item}"] {{
-            background: {"linear-gradient(90deg, rgba(220, 38, 38, 0.25) 0%, rgba(15, 23, 42, 0.6) 100%)" if is_active else "transparent"} !important;
+            background: {"linear-gradient(90deg, rgba(2, 132, 199, 0.25) 0%, rgba(15, 23, 42, 0.6) 100%)" if is_active else "transparent"} !important;
             color: {"#FFFFFF" if is_active else "#94A3B8"} !important;
-            border-left: {"5px solid #F43F5E" if is_active else "5px solid transparent"} !important;
+            border-left: {"5px solid #06B6D4" if is_active else "5px solid transparent"} !important;
             font-weight: {"800" if is_active else "600"} !important;
-            box-shadow: {"0 4px 14px rgba(220, 38, 38, 0.3)" if is_active else "none"} !important;
+            box-shadow: {"0 4px 14px rgba(2, 132, 199, 0.3)" if is_active else "none"} !important;
         }}
         section[data-testid="stSidebar"] div#nav_btn_{item} button:active,
         section[data-testid="stSidebar"] div#nav_btn_{item} button:focus,
@@ -1348,7 +1348,7 @@ with st.sidebar:
         section[data-testid="stSidebar"] div[id*="nav_btn_{item}"] button:focus,
         section[data-testid="stSidebar"] button[key="nav_btn_{item}"]:active,
         section[data-testid="stSidebar"] button[key="nav_btn_{item}"]:focus {{
-            background: linear-gradient(135deg, #DC2626 0%, #F43F5E 100%) !important;
+            background: linear-gradient(135deg, #0284C7 0%, #06B6D4 100%) !important;
             color: #FFFFFF !important;
         }}
         section[data-testid="stSidebar"] div#nav_btn_{item} button *,
@@ -1384,7 +1384,7 @@ with st.sidebar:
     section[data-testid="stSidebar"] button[key="logout_btn"] {{
         background-color: #FFFFFF !important;
         background: #FFFFFF !important;
-        color: #DC2626 !important;
+        color: #0284C7 !important;
         border: 1px solid #D9E2E7 !important;
         border-radius: 8px !important;
         text-align: left !important;
@@ -1407,10 +1407,10 @@ with st.sidebar:
     section[data-testid="stSidebar"] button[key="logout_btn"]:focus {{
         background-color: #FEE2E2 !important;
         background: #FEE2E2 !important;
-        color: #B91C1C !important;
+        color: #0369A1 !important;
         border-color: #FCA5A5 !important;
         transform: translateY(-1px) !important;
-        box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25) !important;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25) !important;
     }}
     section[data-testid="stSidebar"] div.stElementContainer:has(#logout-marker) + div.stElementContainer button *,
     section[data-testid="stSidebar"] div.stElementContainer:has(#logout-marker) + div.stElementContainer button p,
@@ -1424,7 +1424,7 @@ with st.sidebar:
     section[data-testid="stSidebar"] div#logout_btn button span,
     section[data-testid="stSidebar"] div[id*="logout"] button span,
     section[data-testid="stSidebar"] button[key="logout_btn"] span {{
-        color: #DC2626 !important;
+        color: #0284C7 !important;
         background: transparent !important;
     }}
     section[data-testid="stSidebar"] div.stElementContainer:has(#logout-marker) + div.stElementContainer button:hover *,
@@ -1439,7 +1439,7 @@ with st.sidebar:
     section[data-testid="stSidebar"] div#logout_btn button:hover span,
     section[data-testid="stSidebar"] div[id*="logout"] button:hover span,
     section[data-testid="stSidebar"] button[key="logout_btn"]:hover span {{
-        color: #B91C1C !important;
+        color: #0369A1 !important;
         background: transparent !important;
     }}
     section[data-testid="stSidebar"] div.stElementContainer:has(#logout-marker) + div.stElementContainer button::before,
@@ -1488,17 +1488,17 @@ with st.sidebar:
             st.query_params["role"] = role_slug
 
     # 3. Glassmorphic User Profile Card at Bottom of Sidebar
-    role_badge_color = "#F43F5E" if user_role == "Supervisor" else "#FB7185"
-    role_badge_bg = "rgba(244, 63, 94, 0.15)" if user_role == "Supervisor" else "rgba(251, 113, 133, 0.15)"
-    role_badge_border = "rgba(244, 63, 94, 0.35)" if user_role == "Supervisor" else "rgba(251, 113, 133, 0.35)"
+    role_badge_color = "#06B6D4" if user_role == "Supervisor" else "#38BDF8"
+    role_badge_bg = "rgba(6, 182, 212, 0.15)" if user_role == "Supervisor" else "rgba(56, 189, 248, 0.15)"
+    role_badge_border = "rgba(6, 182, 212, 0.35)" if user_role == "Supervisor" else "rgba(56, 189, 248, 0.35)"
 
     st.markdown(
         clean_html(f"""
-        <div style="margin-top: 32px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(244, 63, 94, 0.25); backdrop-filter: blur(10px); border-radius: 12px; padding: 14px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);">
+        <div style="margin-top: 32px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(6, 182, 212, 0.25); backdrop-filter: blur(10px); border-radius: 12px; padding: 14px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); padding: 7px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        {get_svg_icon("user", color="#F43F5E", size=18)}
+                    <div style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); padding: 7px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        {get_svg_icon("user", color="#06B6D4", size=18)}
                     </div>
                     <div>
                         <div style="font-size: 0.875rem; font-weight: 700; color: #FFFFFF; line-height: 1.2;">{username}</div>
@@ -1528,7 +1528,7 @@ st.markdown(
             <h2 style="font-size: 1.6rem; font-weight: 800; color: #0F172A; margin: 0;">{selected_nav}</h2>
         </div>
         <div class="status-pill active">
-            {get_svg_icon("server", color="#DC2626", size=14)} Knowledge Base Active
+            {get_svg_icon("server", color="#0284C7", size=14)} Knowledge Base Active
         </div>
     </div>
     """),
@@ -1543,7 +1543,7 @@ if selected_nav == "Dashboard":
 
     st.markdown(
         clean_html(f"""
-        <div class="neri-card" style="border-left: 4px solid #DC2626;">
+        <div class="neri-card" style="border-left: 4px solid #0284C7;">
             <h3 style="font-size: 1.25rem; font-weight: 800; color: #0F172A; margin-bottom: 4px;">Welcome back, {username}</h3>
             <p style="font-size: 0.875rem; color: #64748B; margin: 0;">
                 Access grounded maintenance intelligence and troubleshooting assistance for plant machinery.
@@ -1582,7 +1582,7 @@ if selected_nav == "Dashboard":
             <div class="neri-card" style="height: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <span style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Active Machines</span>
-                    {get_svg_icon("wrench", color="#DC2626", size=20)}
+                    {get_svg_icon("wrench", color="#0284C7", size=20)}
                 </div>
                 <div style="font-size: 2rem; font-weight: 800; color: #0F172A;">{len(unique_machines) if unique_machines else '—'}</div>
                 <div style="font-size: 0.75rem; color: #64748B; margin-top: 4px;">Registered equipment in history</div>
@@ -1597,7 +1597,7 @@ if selected_nav == "Dashboard":
             <div class="neri-card" style="height: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <span style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Troubleshooting Sessions</span>
-                    {get_svg_icon("history", color="#DC2626", size=20)}
+                    {get_svg_icon("history", color="#0284C7", size=20)}
                 </div>
                 <div style="font-size: 2rem; font-weight: 800; color: #0F172A;">{total_sessions_count}</div>
                 <div style="font-size: 0.75rem; color: #64748B; margin-top: 4px;">Recorded diagnostic queries</div>
@@ -1612,7 +1612,7 @@ if selected_nav == "Dashboard":
             <div class="neri-card" style="height: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <span style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Approved Documents</span>
-                    {get_svg_icon("document", color="#DC2626", size=20)}
+                    {get_svg_icon("document", color="#0284C7", size=20)}
                 </div>
                 <div style="font-size: 2rem; font-weight: 800; color: #0F172A;">{approved_docs_count}</div>
                 <div style="font-size: 0.75rem; color: #64748B; margin-top: 4px;">Indexed manuals, logs & safety specs</div>
@@ -1626,8 +1626,8 @@ if selected_nav == "Dashboard":
     # Primary Operational Command Action Panel
     st.markdown(
         clean_html("""
-        <div class="neri-card" style="background: #FFFFFF; border-left: 4px solid #DC2626; margin-top: 8px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #DC2626; text-transform: uppercase; margin-bottom: 4px;">OPERATIONAL COMMAND</div>
+        <div class="neri-card" style="background: #FFFFFF; border-left: 4px solid #0284C7; margin-top: 8px;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; margin-bottom: 4px;">OPERATIONAL COMMAND</div>
             <h4 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 6px 0;">Need to diagnose a machine problem?</h4>
             <p style="font-size: 0.875rem; color: #64748B; margin: 0 0 16px 0; line-height: 1.5;">
                 Start a grounded troubleshooting session using approved manuals and maintenance documentation.
@@ -1694,7 +1694,7 @@ elif selected_nav == "Troubleshoot":
     st.markdown(
         clean_html("""
         <div style="margin-bottom: 20px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #DC2626; text-transform: uppercase; letter-spacing: 0.5px;">DIAGNOSTIC WORKSPACE</div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px;">DIAGNOSTIC WORKSPACE</div>
             <h3 style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 2px 0 4px 0;">Diagnose a machine problem</h3>
             <p style="font-size: 0.875rem; color: #64748B; margin: 0;">
                 Describe the issue and Neri will search approved documentation for grounded guidance.
@@ -1742,26 +1742,26 @@ elif selected_nav == "Troubleshoot":
                     progress_placeholder = st.empty()
                     progress_placeholder.markdown(
                         clean_html(f"""
-                        <div class="neri-card" style="border-left: 4px solid #DC2626; padding: 20px;">
+                        <div class="neri-card" style="border-left: 4px solid #0284C7; padding: 20px;">
                             <div style="font-weight: 700; font-size: 1rem; color: #0F172A; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                                {get_svg_icon("cpu", color="#DC2626", size=20)} 
+                                {get_svg_icon("cpu", color="#0284C7", size=20)} 
                                 <span>Neri Diagnostic Pipeline Active</span>
                             </div>
                             <div style="font-size: 0.875rem; color: #64748B; line-height: 1.8; display: flex; flex-direction: column; gap: 6px;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("search", color="#DC2626", size=14)} <span>Understanding problem & symptoms...</span>
+                                    {get_svg_icon("search", color="#0284C7", size=14)} <span>Understanding problem & symptoms...</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("document", color="#DC2626", size=14)} <span>Searching approved documentation...</span>
+                                    {get_svg_icon("document", color="#0284C7", size=14)} <span>Searching approved documentation...</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("history", color="#DC2626", size=14)} <span>Checking maintenance records...</span>
+                                    {get_svg_icon("history", color="#0284C7", size=14)} <span>Checking maintenance records...</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("shield", color="#DC2626", size=14)} <span>Checking safety procedures...</span>
+                                    {get_svg_icon("shield", color="#0284C7", size=14)} <span>Checking safety procedures...</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("check", color="#F43F5E", size=14)} <strong style="color: #0F172A;">Preparing troubleshooting guidance...</strong>
+                                    {get_svg_icon("check", color="#06B6D4", size=14)} <strong style="color: #0F172A;">Preparing troubleshooting guidance...</strong>
                                 </div>
                             </div>
                         </div>
@@ -1790,7 +1790,7 @@ elif selected_nav == "Troubleshoot":
             clean_html(f"""
             <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px;">
                 <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; color: #0F172A; margin-bottom: 12px;">
-                    {get_svg_icon("shield-check", color="#DC2626", size=18)} Safety First & Tips
+                    {get_svg_icon("shield-check", color="#0284C7", size=18)} Safety First & Tips
                 </div>
                 <div style="font-size: 0.825rem; color: #64748B; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
                     <div><strong>1. Machine Identification:</strong> Include exact machine name and plant ID for precise retrieval.</div>
@@ -1826,12 +1826,12 @@ elif selected_nav == "Troubleshoot":
                     clean_html(f"""
                     <div class="critical-box">
                         <div class="critical-box-title">
-                            {get_svg_icon("alert", color="#DC2626", size=22)} Safety Documentation Required
+                            {get_svg_icon("alert", color="#0284C7", size=22)} Safety Documentation Required
                         </div>
                         <div style="font-size: 0.9rem; font-weight: 500; line-height: 1.6; margin-bottom: 10px;">
                             {message_text}
                         </div>
-                        <div style="font-size: 0.825rem; color: #7F1D1D; background: rgba(220, 38, 38, 0.08); padding: 10px; border-radius: 6px;">
+                        <div style="font-size: 0.825rem; color: #7F1D1D; background: rgba(2, 132, 199, 0.08); padding: 10px; border-radius: 6px;">
                             Neri cannot provide troubleshooting steps for safety-critical components without verified safety documentation.
                         </div>
                     </div>
@@ -1843,13 +1843,13 @@ elif selected_nav == "Troubleshoot":
                 st.markdown(
                     clean_html(f"""
                     <div class="neri-card" style="border-left: 4px solid #DC2626; background: #FFFFFF; padding: 24px;">
-                        <div style="display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 700; color: #0F172A; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 700; color: #DC2626; margin-bottom: 8px;">
                             {get_svg_icon("document", color="#DC2626", size=22)} No reliable answer found
                         </div>
                         <div style="font-size: 0.9rem; color: #64748B; line-height: 1.6; margin-bottom: 12px;">
                             {message_text}
                         </div>
-                        <div style="font-size: 0.825rem; color: #DC2626; background: #FFF1F2; padding: 10px; border-radius: 6px; font-weight: 500;">
+                        <div style="font-size: 0.825rem; color: #991B1B; background: #FEF2F2; border: 1px solid #FCA5A5; padding: 12px; border-radius: 8px; font-weight: 500;">
                             Try describing the machine symptoms differently or check whether the required documentation is available in the Knowledge Base.
                         </div>
                     </div>
@@ -1871,7 +1871,7 @@ elif selected_nav == "Troubleshoot":
                 <div class="neri-card" style="margin-bottom: 16px; padding: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
                         <div>
-                            <div style="font-size: 0.75rem; font-weight: 700; color: #DC2626; text-transform: uppercase; letter-spacing: 0.5px;">DIAGNOSTIC REPORT</div>
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px;">DIAGNOSTIC REPORT</div>
                             <h3 style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 4px 0 10px 0;">Troubleshooting Guidance</h3>
                             <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 8px;">
                                 <span>{m_name}</span>
@@ -1884,7 +1884,7 @@ elif selected_nav == "Troubleshoot":
                             </div>
                         </div>
                         <span class="status-pill active" style="flex-shrink: 0;">
-                            {get_svg_icon("shield-check", color="#DC2626", size=14)} Grounded in Documentation
+                            {get_svg_icon("shield-check", color="#0284C7", size=14)} Grounded in Documentation
                         </span>
                     </div>
                 </div>
@@ -2013,15 +2013,15 @@ elif selected_nav == "Troubleshoot":
                     <div class="source-box" style="margin-bottom: 10px;">
                         <div style="font-weight: 700; font-size: 0.9rem; color: #0F172A; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                {get_svg_icon("file-text", color="#DC2626", size=18)}
+                                {get_svg_icon("file-text", color="#0284C7", size=18)}
                                 <span>{doc_name}</span>
                             </div>
-                            <span style="font-size: 0.725rem; font-weight: 700; color: #DC2626; background: #FFF1F2; padding: 2px 8px; border-radius: 4px;">{doc_type_str}</span>
+                            <span style="font-size: 0.725rem; font-weight: 700; color: #0284C7; background: #E0F2FE; padding: 2px 8px; border-radius: 4px;">{doc_type_str}</span>
                         </div>
                         <div style="font-size: 0.8rem; color: #64748B; display: flex; gap: 16px;">
                             <span>{sec_val}</span>
                             <span>{pg_val}</span>
-                            <span style="color: #DC2626; font-weight: 600;">{count_str}</span>
+                            <span style="color: #0284C7; font-weight: 600;">{count_str}</span>
                         </div>
                     </div>
                     """)
@@ -2094,7 +2094,7 @@ elif selected_nav == "History":
     st.markdown(
         clean_html("""
         <div style="margin-bottom: 20px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #DC2626; text-transform: uppercase; letter-spacing: 0.5px;">CASE ARCHIVE</div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px;">CASE ARCHIVE</div>
             <h3 style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin: 2px 0 4px 0;">Troubleshooting Case History</h3>
             <p style="font-size: 0.875rem; color: #64748B; margin: 0;">
                 Review previous diagnostic sessions and archived technical reports.
@@ -2122,7 +2122,7 @@ elif selected_nav == "History":
             st.markdown(clean_html(f"""
             <div class="neri-card" style="padding: 16px; height: 100%;">
                 <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Helpful Feedback</div>
-                <div style="font-size: 1.75rem; font-weight: 800; color: #DC2626; margin-top: 4px;">{helpful_sessions}</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0284C7; margin-top: 4px;">{helpful_sessions}</div>
             </div>
             """), unsafe_allow_html=True)
         with hk_col3:
@@ -2192,9 +2192,9 @@ elif selected_nav == "History":
 
         st.markdown(
             clean_html(f"""
-            <div class="neri-card" style="border-left: 4px solid #DC2626;">
+            <div class="neri-card" style="border-left: 4px solid #0284C7;">
                 <div class="neri-card-header">
-                    {get_svg_icon("document", color="#DC2626", size=20)} Archived Diagnostic Case Report
+                    {get_svg_icon("document", color="#0284C7", size=20)} Archived Diagnostic Case Report
                 </div>
                 <div style="font-size: 0.875rem; color: #0F172A; line-height: 1.6;">
                     <strong>Machine:</strong> {det.get('machine')}<br>
@@ -2269,8 +2269,8 @@ elif selected_nav == "Documents":
     st.markdown(
         clean_html("""
         <div style="margin-bottom: 20px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #DC2626; text-transform: uppercase; letter-spacing: 0.5px;">KNOWLEDGE BASE CENTER</div>
-            <h3 style="font-size: 1.35rem; font-weight: 800; color: #DC2626; margin: 2px 0 4px 0;">Approved Documentation Management</h3>
+            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px;">KNOWLEDGE BASE CENTER</div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: #0284C7; margin: 2px 0 4px 0;">Approved Documentation Management</h3>
             <p style="font-size: 0.875rem; color: #64748B; margin: 0;">
                 Manage approved manuals, maintenance logs, and safety procedures used by Neri.
             </p>
@@ -2299,7 +2299,7 @@ elif selected_nav == "Documents":
             st.markdown(clean_html(f"""
             <div class="neri-card" style="padding: 16px; height: 100%;">
                 <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Manuals</div>
-                <div style="font-size: 1.75rem; font-weight: 800; color: #DC2626; margin-top: 4px;">{manuals_count}</div>
+                <div style="font-size: 1.75rem; font-weight: 800; color: #0284C7; margin-top: 4px;">{manuals_count}</div>
             </div>
             """), unsafe_allow_html=True)
         with dk_col3:
@@ -2325,7 +2325,7 @@ elif selected_nav == "Documents":
     if user_role == "Supervisor":
         with st.expander("Add Approved Documentation", expanded=False):
             with st.form("doc_upload_form"):
-                st.markdown("<h3 style='color: #DC2626;'>Upload Approved Documentation</h3>", unsafe_allow_html=True)
+                st.markdown("<h3 style='color: #0284C7;'>Upload Approved Documentation</h3>", unsafe_allow_html=True)
 
                 doc_type = st.selectbox("Document Type", ["Manual", "Maintenance Log", "Safety Procedure"])
 
@@ -2453,7 +2453,7 @@ elif selected_nav == "Documents":
                             <div class="document-box" style="margin-bottom: 12px; background: #FFFFFF;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <div style="font-weight: 700; font-size: 1rem; color: #0F172A; display: flex; align-items: center; gap: 8px;">
-                                        {get_svg_icon("file-text", color="#DC2626", size=20)} {fname}
+                                        {get_svg_icon("file-text", color="#0284C7", size=20)} {fname}
                                     </div>
                                     {st_pill}
                                 </div>
@@ -2464,8 +2464,8 @@ elif selected_nav == "Documents":
                                     <strong>Chunks:</strong> {chunks}
                                 </div>
                             </div>
-                            <div style="font-size: 0.75rem; font-weight: 700; color: #DC2626; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                                {get_svg_icon("document", color="#DC2626", size=14)} DOCUMENT CONTENT PREVIEW
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                                {get_svg_icon("document", color="#0284C7", size=14)} DOCUMENT CONTENT PREVIEW
                             </div>
                             """),
                             unsafe_allow_html=True
