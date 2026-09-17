@@ -150,15 +150,23 @@ def post_document_upload(file_name: str, file_bytes: bytes, document_type: str, 
         "status": "indexed",
     }
 
+import html
+
 def fetch_document_content(filename: str) -> str:
     try:
-        resp = requests.get(f"{RAG_API_URL}/documents/{filename}/content", timeout=2)
+        from src.history import get_document_content
+        content = get_document_content(filename)
+        if content and content != "Document content unavailable.":
+            return content
+    except Exception:
+        pass
+    try:
+        resp = requests.get(f"{RAG_API_URL}/documents/{filename}/content", timeout=1)
         if resp.status_code == 200:
             return resp.json().get("content", "")
     except Exception:
         pass
-    from src.history import get_document_content
-    return get_document_content(filename)
+    return "Document content unavailable."
 
 def clean_html(html_str: str) -> str:
     """Removes leading and trailing whitespace from each line to prevent Streamlit Markdown from treating HTML as code blocks."""
@@ -2381,7 +2389,11 @@ elif selected_nav == "Documents":
     # Approved Documentation Directory List
     try:
         docs = fetch_documents_list()
+    except Exception:
+        docs = []
+        st.error("Could not fetch document list.")
 
+    if docs:
         if search_query.strip():
             q = search_query.strip().lower()
             q_terms = [q]
@@ -2413,55 +2425,55 @@ elif selected_nav == "Documents":
             st.info("No matching documents found in knowledge base.")
         else:
             for d in docs:
-                fname = d.get("filename", "Unknown")
-                st_val = str(d.get("status", "indexed")).lower()
-                if st_val == "indexed":
-                    st_pill = '<span class="status-pill active">Indexed</span>'
-                elif st_val == "processing":
-                    st_pill = '<span class="status-pill warning">Processing</span>'
-                else:
-                    st_pill = '<span class="status-pill error">Error</span>'
+                try:
+                    fname = d.get("filename", "Unknown")
+                    st_val = str(d.get("status", "indexed")).lower()
+                    if st_val == "indexed":
+                        st_pill = '<span class="status-pill active">Indexed</span>'
+                    elif st_val == "processing":
+                        st_pill = '<span class="status-pill warning">Processing</span>'
+                    else:
+                        st_pill = '<span class="status-pill error">Error</span>'
 
-                doc_type = str(d.get("document_type", "manual")).replace("_", " ").title()
-                machine = d.get("machine") or "All Equipment"
-                version = d.get("version") or "1.0"
-                chunks = d.get("chunks", 0)
+                    doc_type = str(d.get("document_type", "manual")).replace("_", " ").title()
+                    machine = d.get("machine") or "All Equipment"
+                    version = d.get("version") or "1.0"
+                    chunks = d.get("chunks", 0)
 
-                exp_label = f"{fname}  •  {doc_type}  •  {machine}  ({chunks} Chunks)"
+                    exp_label = f"{fname}  •  {doc_type}  •  {machine}  ({chunks} Chunks)"
 
-                with st.expander(exp_label):
-                    st.markdown(
-                        clean_html(f"""
-                        <div class="document-box" style="margin-bottom: 12px; background: #FFFFFF;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <div style="font-weight: 700; font-size: 1rem; color: #0F172A; display: flex; align-items: center; gap: 8px;">
-                                    {get_svg_icon("file-text", color="#0284C7", size=20)} {fname}
+                    with st.expander(exp_label):
+                        st.markdown(
+                            clean_html(f"""
+                            <div class="document-box" style="margin-bottom: 12px; background: #FFFFFF;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <div style="font-weight: 700; font-size: 1rem; color: #0F172A; display: flex; align-items: center; gap: 8px;">
+                                        {get_svg_icon("file-text", color="#0284C7", size=20)} {fname}
+                                    </div>
+                                    {st_pill}
                                 </div>
-                                {st_pill}
+                                <div style="font-size: 0.825rem; color: #64748B; line-height: 1.5;">
+                                    <strong>Type:</strong> {doc_type} &bull; 
+                                    <strong>Machine:</strong> {machine} &bull; 
+                                    <strong>Version:</strong> {version} &bull; 
+                                    <strong>Chunks:</strong> {chunks}
+                                </div>
                             </div>
-                            <div style="font-size: 0.825rem; color: #64748B; line-height: 1.5;">
-                                <strong>Type:</strong> {doc_type} &bull; 
-                                <strong>Machine:</strong> {machine} &bull; 
-                                <strong>Version:</strong> {version} &bull; 
-                                <strong>Chunks:</strong> {chunks}
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                                {get_svg_icon("document", color="#0284C7", size=14)} DOCUMENT CONTENT PREVIEW
                             </div>
-                        </div>
-                        <div style="font-size: 0.75rem; font-weight: 700; color: #0284C7; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                            {get_svg_icon("document", color="#0284C7", size=14)} DOCUMENT CONTENT PREVIEW
-                        </div>
-                        """),
-                        unsafe_allow_html=True
-                    )
+                            """),
+                            unsafe_allow_html=True
+                        )
 
-                    doc_text = fetch_document_content(fname)
+                        try:
+                            doc_text = fetch_document_content(fname)
+                        except Exception:
+                            doc_text = "Content preview unavailable."
 
-                    st.markdown(
-                        clean_html(f"""
-                        <div style="background: #0F172A; color: #E2E8F0; border-radius: 8px; padding: 18px; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.85rem; line-height: 1.6; max-height: 420px; overflow-y: auto; white-space: pre-wrap; border: 1px solid #1E293B;">
-{doc_text}
-                        </div>
-                        """),
-                        unsafe_allow_html=True
-                    )
-    except Exception:
-        st.error("Could not fetch document list.")
+                        escaped_text = html.escape(doc_text or "No content preview available.")
+                        preview_box = f'<div style="background: #0F172A; color: #E2E8F0; border-radius: 8px; padding: 18px; font-family: \'Consolas\', \'Courier New\', monospace; font-size: 0.85rem; line-height: 1.6; max-height: 420px; overflow-y: auto; white-space: pre-wrap; border: 1px solid #1E293B;">{escaped_text}</div>'
+                        st.markdown(preview_box, unsafe_allow_html=True)
+
+                except Exception:
+                    st.warning(f"Could not load preview for document: {d.get('filename', 'Unknown')}")
