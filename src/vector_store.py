@@ -20,6 +20,12 @@ collection = client.get_or_create_collection(
 )
 
 
+def get_collection():
+    """Return the ChromaDB collection instance."""
+    return collection
+
+
+
 # ============================================================
 # Add Documents
 # ============================================================

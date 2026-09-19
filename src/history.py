@@ -1,8 +1,10 @@
 import json
 import sqlite3
 from datetime import datetime
+from pathlib import Path
 
 from src.config import BASE_DIR
+
 
 
 DATABASE_PATH = BASE_DIR / "storage" / "neri_history.db"
@@ -472,22 +474,44 @@ def auto_seed_if_empty():
         )
 
 
+def _sort_chunks(metadatas: list[dict], documents: list[str]) -> list[str]:
+    def sort_key(item):
+        meta, _ = item
+        chunk_id = str(meta.get("chunk_id", ""))
+        page = meta.get("page") or 0
+        try:
+            num = int(chunk_id.rsplit("_", 1)[-1])
+        except Exception:
+            num = 0
+        return (page, num, chunk_id)
+
+    paired = list(zip(metadatas, documents))
+    paired.sort(key=sort_key)
+    return [doc for _, doc in paired]
+
+
 def get_document_content(filename: str) -> str:
     """Retrieve full text content of a document by filename."""
 
+    fname = Path(filename).name
+
     for sub in ["manuals", "maintenance_logs", "safety"]:
-        path = BASE_DIR / "data" / sub / filename
+        path = BASE_DIR / "data" / sub / fname
         if path.exists():
             try:
-                return path.read_text(encoding="utf-8", errors="ignore")
+                txt = path.read_text(encoding="utf-8", errors="ignore").strip()
+                if txt:
+                    return txt
             except Exception:
                 pass
 
-    up_path = BASE_DIR / "uploads" / filename
+    up_path = BASE_DIR / "uploads" / fname
     if up_path.exists():
         if up_path.suffix.lower() == ".txt":
             try:
-                return up_path.read_text(encoding="utf-8", errors="ignore")
+                txt = up_path.read_text(encoding="utf-8", errors="ignore").strip()
+                if txt:
+                    return txt
             except Exception:
                 pass
         elif up_path.suffix.lower() == ".pdf":
@@ -495,22 +519,28 @@ def get_document_content(filename: str) -> str:
                 import pypdf
                 reader = pypdf.PdfReader(str(up_path))
                 pages = [
-                    page.extract_text()
+                    page.extract_text().strip()
                     for page in reader.pages
-                    if page.extract_text()
+                    if page.extract_text() and page.extract_text().strip()
                 ]
-                return "\n\n".join(pages)
+                if pages:
+                    return "\n\n".join(pages)
             except Exception:
                 pass
 
     try:
         from src.vector_store import get_collection
         collection = get_collection()
-        res = collection.get(where={"document": filename})
-        if res and res.get("documents"):
-            return "\n\n--- Chunk Divider ---\n\n".join(res["documents"])
+        res = collection.get(where={"document": fname})
+        if res and res.get("documents") and len(res["documents"]) > 0:
+            docs = res["documents"]
+            metadatas = res.get("metadatas") or []
+            if len(metadatas) == len(docs):
+                docs = _sort_chunks(metadatas, docs)
+            return "\n\n--- Chunk Divider ---\n\n".join(docs)
     except Exception:
         pass
 
     return "Document content unavailable."
+
 

@@ -101,7 +101,7 @@ def post_document_upload(file_name: str, file_bytes: bytes, document_type: str, 
             "version": version,
             "owner": owner
         }
-        res = requests.post(f"{RAG_API_URL}/documents/upload", files=files, data=data, timeout=120)
+        res = requests.post(f"{RAG_API_URL}/documents/upload", files=files, data=data, timeout=2)
         if res.status_code == 200:
             return res.json()
     except Exception:
