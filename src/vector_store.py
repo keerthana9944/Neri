@@ -33,9 +33,12 @@ def get_collection():
 def add_documents(
     chunks: list[dict],
     embeddings: list[list[float]],
+    clean_existing: bool = True,
 ) -> None:
     """
     Add or update document chunks in ChromaDB.
+    When clean_existing is True, purges any existing chunks for the same
+    doc_id first to prevent duplicate or orphaned chunks.
     """
 
     if not chunks:
@@ -45,6 +48,18 @@ def add_documents(
         raise ValueError(
             "Number of chunks and embeddings must match."
         )
+
+    # Purge any existing chunks for these doc_ids to ensure clean updates
+    if clean_existing:
+        seen_doc_ids = set()
+        for chunk in chunks:
+            did = chunk.get("metadata", {}).get("doc_id")
+            if did and did not in seen_doc_ids:
+                seen_doc_ids.add(did)
+                try:
+                    collection.delete(where={"doc_id": did})
+                except Exception:
+                    pass
 
     documents = [
         chunk["text"]
@@ -67,6 +82,65 @@ def add_documents(
         embeddings=embeddings,
         metadatas=metadatas,
     )
+
+
+# ============================================================
+# Delete Document Chunks
+# ============================================================
+
+def delete_document_chunks(
+    doc_id: str | None = None,
+    document_name: str | None = None,
+    machine: str | None = None,
+) -> int:
+    """
+    Delete document chunks from ChromaDB.
+
+    When 'doc_id' is provided, deletion is strictly restricted to that unique ID
+    and will NEVER delete chunks belonging to other documents or machines.
+    Filename-based fallback is used ONLY when doc_id is None, and requires
+    'machine' to prevent cross-machine chunk deletion.
+    """
+    deleted_count = 0
+
+    if doc_id:
+        try:
+            res = collection.delete(where={"doc_id": doc_id})
+            if isinstance(res, dict) and "deleted" in res:
+                deleted_count += res.get("deleted", 0)
+        except Exception:
+            pass
+        return deleted_count
+
+    elif document_name and machine:
+        try:
+            from src.machine_norm import get_machine_retrieval_aliases
+            aliases = get_machine_retrieval_aliases(machine)
+            if aliases:
+                res = collection.delete(
+                    where={
+                        "$and": [
+                            {"document": {"$eq": document_name}},
+                            {"machine": {"$in": aliases}},
+                        ]
+                    }
+                )
+            else:
+                res = collection.delete(
+                    where={
+                        "$and": [
+                            {"document": {"$eq": document_name}},
+                            {"machine": {"$eq": machine}},
+                        ]
+                    }
+                )
+
+            if isinstance(res, dict) and "deleted" in res:
+                deleted_count += res.get("deleted", 0)
+        except Exception:
+            pass
+
+    return deleted_count
 
 
 # ============================================================
@@ -107,3 +181,4 @@ def get_document_count() -> int:
     """
 
     return collection.count()
+

@@ -37,9 +37,11 @@ def extract_pdf(
         reader.pages,
         start=1,
     ):
-        text = clean_text(
-            page.extract_text() or ""
-        )
+        try:
+            raw_text = page.extract_text(extraction_mode="layout") or page.extract_text() or ""
+        except Exception:
+            raw_text = page.extract_text() or ""
+        text = clean_text(raw_text)
 
         if text:
             pages.append(
@@ -167,15 +169,25 @@ def get_document_type(
     return "unknown"
 
 
+from src.machine_norm import (
+    generate_chunk_id,
+    generate_document_id,
+    normalize_machine_id,
+)
+
+
 def create_chunks(
     file_path: Path,
     document_type: str | None = None,
     machine: str | None = None,
     version: str | None = None,
     owner: str | None = None,
+    doc_id: str | None = None,
 ) -> list[dict]:
     """
     Extract and chunk a document while preserving metadata.
+    Uses canonical machine normalization, deterministic doc_id,
+    and collision-resistant chunk IDs.
     """
 
     pages = extract_document(
@@ -186,6 +198,15 @@ def create_chunks(
         file_path,
         document_type,
     )
+
+    canonical_machine = normalize_machine_id(machine)
+
+    if not doc_id:
+        doc_id = generate_document_id(
+            document_type=document_type,
+            machine=canonical_machine,
+            filename=file_path.name,
+        )
 
     chunks = []
 
@@ -198,17 +219,21 @@ def create_chunks(
         )
 
         for chunk in page_chunks:
+            chunk_id = generate_chunk_id(
+                doc_id=doc_id,
+                chunk_index=chunk_counter,
+            )
 
             chunks.append(
                 {
                     "text": chunk,
                     "metadata": {
+                        "doc_id": doc_id,
                         "document": file_path.name,
                         "document_type": document_type,
-                        "machine": (
-                            machine
-                            if machine
-                            else "unknown"
+                        "machine": canonical_machine,
+                        "machine_display": (
+                            machine if machine else canonical_machine
                         ),
                         "version": (
                             version
@@ -222,10 +247,7 @@ def create_chunks(
                         ),
                         "section": "unknown",
                         "page": page_data["page"],
-                        "chunk_id": (
-                            f"{file_path.stem}_"
-                            f"{chunk_counter}"
-                        ),
+                        "chunk_id": chunk_id,
                     },
                 }
             )

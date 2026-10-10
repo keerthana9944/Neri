@@ -1,9 +1,29 @@
+import sys
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+project_root_str = str(PROJECT_ROOT)
+if project_root_str in sys.path:
+    sys.path.remove(project_root_str)
+sys.path.insert(0, project_root_str)
+
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
 from pydantic import BaseModel
 
+try:
+    from src.config import (
+        UPLOAD_DIR,
+        get_supervisor_api_key,
+        get_technician_api_key,
+    )
+except ImportError:
+    from config import (
+        UPLOAD_DIR,
+        get_supervisor_api_key,
+        get_technician_api_key,
+    )
+from src.embeddings import create_embeddings
 from src.history import (
     get_documents,
     get_history,
@@ -12,11 +32,8 @@ from src.history import (
     save_feedback,
     save_session,
 )
-from src.pipeline import troubleshoot
-
-from src.config import UPLOAD_DIR
-from src.embeddings import create_embeddings
 from src.ingestion import create_chunks
+from src.pipeline import troubleshoot
 from src.vector_store import add_documents
 
 
@@ -25,6 +42,57 @@ app = FastAPI(
     description="AI-powered maintenance troubleshooting assistant",
     version="1.0.0",
 )
+
+
+def get_current_user(
+    x_api_key: Optional[str] = Header(None, alias="X-API-Key"),
+    authorization: Optional[str] = Header(None),
+) -> dict:
+    """Validate API authentication token from request headers."""
+    token = x_api_key
+    if not token and authorization:
+        if authorization.startswith("Bearer "):
+            token = authorization[7:].strip()
+        else:
+            token = authorization.strip()
+
+    if not token or not token.strip():
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication credentials are required.",
+        )
+
+    supervisor_key = get_supervisor_api_key()
+    technician_key = get_technician_api_key()
+
+    # Fail closed if server keys are not configured properly or are identical
+    if not supervisor_key or not technician_key or supervisor_key == technician_key:
+        raise HTTPException(
+            status_code=500,
+            detail="Server authentication configuration is invalid or missing.",
+        )
+
+    if token == supervisor_key:
+        return {"username": "supervisor", "role": "Supervisor"}
+    elif token == technician_key:
+        return {"username": "technician", "role": "Technician"}
+    else:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication token.",
+        )
+
+
+def require_supervisor(
+    current_user: dict = Depends(get_current_user),
+) -> dict:
+    """Ensure current user has Supervisor role."""
+    if current_user.get("role") != "Supervisor":
+        raise HTTPException(
+            status_code=403,
+            detail="Supervisor privileges required for this action.",
+        )
+    return current_user
 
 
 class TroubleshootingRequest(BaseModel):
@@ -54,7 +122,10 @@ def health():
 
 
 @app.post("/query")
-def query(request: TroubleshootingRequest):
+def query(
+    request: TroubleshootingRequest,
+    current_user: dict = Depends(get_current_user),
+):
     """Run Neri troubleshooting and save the session."""
 
     try:
@@ -85,7 +156,7 @@ def query(request: TroubleshootingRequest):
 
 
 @app.get("/history")
-def history():
+def history(current_user: dict = Depends(get_current_user)):
     """Return recent troubleshooting sessions."""
 
     try:
@@ -101,7 +172,10 @@ def history():
 
 
 @app.get("/history/{session_id}")
-def history_detail(session_id: int):
+def history_detail(
+    session_id: int,
+    current_user: dict = Depends(get_current_user),
+):
     """Return one troubleshooting session."""
 
     try:
@@ -137,6 +211,7 @@ class FeedbackRequest(BaseModel):
 def feedback(
     session_id: int,
     request: FeedbackRequest,
+    current_user: dict = Depends(get_current_user),
 ):
     """Save feedback for a troubleshooting session."""
 
@@ -186,8 +261,9 @@ async def upload_document(
     machine: Optional[str] = Form(None),
     version: Optional[str] = Form(None),
     owner: Optional[str] = Form(None),
+    current_user: dict = Depends(require_supervisor),
 ):
-    """Upload and index an approved Neri document."""
+    """Upload and index an approved Neri document (Supervisor only)."""
 
     allowed_types = {
         "manual",
@@ -235,12 +311,33 @@ async def upload_document(
             file_content
         )
 
+        from src.machine_norm import (
+            generate_document_id,
+            normalize_machine_id,
+        )
+        from src.vector_store import delete_document_chunks
+
+        canonical_machine = normalize_machine_id(machine)
+        doc_id = generate_document_id(
+            document_type=document_type,
+            machine=canonical_machine,
+            filename=file.filename,
+        )
+
+        # Purge existing chunks for clean re-ingestion (prevents duplicates & orphans)
+        delete_document_chunks(
+            doc_id=doc_id,
+            document_name=file.filename,
+            machine=canonical_machine,
+        )
+
         chunks = create_chunks(
             file_path,
             document_type=document_type,
-            machine=machine,
+            machine=canonical_machine,
             version=version,
             owner=owner,
+            doc_id=doc_id,
         )
 
         if not chunks:
@@ -259,24 +356,27 @@ async def upload_document(
         add_documents(
             chunks=chunks,
             embeddings=embeddings,
+            clean_existing=False,
         )
 
         save_document(
             filename=file.filename,
             document_type=document_type,
-            machine=machine,
+            machine=canonical_machine,
             version=version,
             owner=owner,
             chunks=len(chunks),
             status="indexed",
+            doc_id=doc_id,
         )
 
         return {
             "success": True,
             "message": "Document uploaded and indexed successfully.",
+            "doc_id": doc_id,
             "document": file.filename,
             "document_type": document_type,
-            "machine": machine,
+            "machine": canonical_machine,
             "version": version,
             "owner": owner,
             "chunks": len(chunks),
@@ -296,7 +396,7 @@ async def upload_document(
 # Retrieve document
 #------------------------------#
 @app.get("/documents")
-def documents():
+def documents(current_user: dict = Depends(get_current_user)):
     """Return uploaded documents."""
 
     try:
@@ -312,14 +412,18 @@ def documents():
 
 
 @app.get("/documents/{filename}/content")
-def document_content(filename: str):
-    """Return full content of a document."""
+def document_content(
+    filename: str,
+    machine: Optional[str] = None,
+    current_user: dict = Depends(get_current_user),
+):
+    """Return full content of a document by filename or doc_id."""
 
     try:
         from src.history import get_document_content
         return {
             "filename": filename,
-            "content": get_document_content(filename)
+            "content": get_document_content(filename, machine=machine)
         }
 
     except Exception as error:
@@ -327,3 +431,40 @@ def document_content(filename: str):
             status_code=500,
             detail="Could not retrieve document content.",
         ) from error
+
+
+#------------------------------#
+# Delete document
+#------------------------------#
+@app.delete("/documents/{doc_id}")
+def delete_document_endpoint(
+    doc_id: str,
+    current_user: dict = Depends(require_supervisor),
+):
+    """Delete an uploaded document and its chunks (Supervisor only)."""
+
+    try:
+        from src.history import delete_document
+        deleted = delete_document(doc_id=doc_id)
+
+        if not deleted:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Document '{doc_id}' not found.",
+            )
+
+        return {
+            "success": True,
+            "message": f"Document '{doc_id}' deleted successfully.",
+            "doc_id": doc_id,
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail="Could not delete document.",
+        ) from error
+

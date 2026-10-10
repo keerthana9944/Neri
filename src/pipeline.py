@@ -62,9 +62,16 @@ def troubleshoot(
     # Step 3: Retrieve approved documentation
     # --------------------------------------------------
 
+    from src.machine_norm import resolve_canonical_machine
+
+    canonical_target = resolve_canonical_machine(
+        machine=machine,
+        machine_id=machine_id,
+    )
+
     retrieved_chunks = retrieve_documents(
         query=query,
-        machine=machine,
+        machine=canonical_target if canonical_target != "unknown" else machine,
         n_results=n_results,
     )
 
@@ -75,7 +82,8 @@ def troubleshoot(
     safety_critical = is_safety_critical(query)
 
     safety_evidence_available = has_safety_evidence(
-        retrieved_chunks
+        retrieved_chunks,
+        query=query,
     )
 
     if safety_critical and not safety_evidence_available:
@@ -138,14 +146,7 @@ def troubleshoot(
     )
 
     # --------------------------------------------------
-    # Step 7: Remove unsupported safety warning
-    # --------------------------------------------------
-
-    if not safety_evidence_available:
-        response["safety_warning"] = None
-
-    # --------------------------------------------------
-    # Step 8: Add source references
+    # Step 7: Add source references
     # --------------------------------------------------
 
     response["sources"] = build_sources(

@@ -1,4 +1,8 @@
 from src.embeddings import create_embedding
+from src.machine_norm import (
+    get_machine_retrieval_aliases,
+    normalize_machine_id,
+)
 from src.vector_store import search_documents
 
 
@@ -60,16 +64,16 @@ def retrieve_documents(
     """
     Retrieve approved documentation for a troubleshooting query.
 
-    Normal retrieval:
-        Searches documentation assigned to the selected machine.
+    Machine Pre-Filtering:
+        Pre-filters ChromaDB retrieval using the supported 'where' mechanism
+        BEFORE semantic ranking, ensuring machine isolation and preventing
+        irrelevant documents from other machines from crowding out results.
+        Supports canonical machine IDs and backward-compatible legacy aliases.
+        Never falls back to cross-machine evidence when a specific machine is requested.
 
-    Safety-critical retrieval:
-        In addition to normal retrieval, explicitly searches
-        the selected machine's approved safety documentation.
-
-    This ensures that safety evidence is not missed simply
-    because a safety document did not appear in the normal
-    semantic top-k results.
+    Safety-Critical Retrieval:
+        In addition to normal retrieval, explicitly searches the selected
+        machine's approved safety documentation using ChromaDB metadata pre-filtering.
     """
 
     if not query.strip():
@@ -79,59 +83,44 @@ def retrieve_documents(
         query
     )
 
+    # Determine canonical machine and retrieval variants for ChromaDB pre-filtering
+    has_specific_machine = bool(machine and str(machine).strip() and str(machine).strip().lower() != "unknown")
+    machine_variants = get_machine_retrieval_aliases(machine) if has_specific_machine else []
+
     # ========================================================
-    # Normal Machine Retrieval
+    # Normal Machine Retrieval (Pre-filtered in ChromaDB)
     # ========================================================
+
+    normal_where = None
+    if has_specific_machine and machine_variants:
+        normal_where = {
+            "machine": {
+                "$in": machine_variants
+            }
+        }
 
     results = search_documents(
         embedding=query_embedding,
         n_results=n_results,
+        where=normal_where,
     )
 
     normal_chunks = _convert_results(
         results
     )
 
-    # Strict machine filtering.
-    if machine:
-
-        filtered_chunks = []
-
-        for chunk in normal_chunks:
-
-            metadata = chunk.get(
-                "metadata",
-                {},
-            )
-
-            chunk_machine = metadata.get(
-                "machine",
-                "unknown",
-            )
-
-            if (
-                chunk_machine.lower()
-                == machine.lower()
-            ):
-                filtered_chunks.append(
-                    chunk
-                )
-
-        normal_chunks = filtered_chunks
-
     # ========================================================
-    # Explicit Safety Retrieval
+    # Explicit Safety Retrieval (Pre-filtered in ChromaDB)
     # ========================================================
 
     safety_chunks = []
 
-    if machine:
-
+    if has_specific_machine and machine_variants:
         safety_where = {
             "$and": [
                 {
                     "machine": {
-                        "$eq": machine
+                        "$in": machine_variants
                     }
                 },
                 {
@@ -151,18 +140,33 @@ def retrieve_documents(
         safety_chunks = _convert_results(
             safety_results
         )
+    elif not has_specific_machine:
+        # If no specific machine is required, query general safety documentation
+        general_safety_where = {
+            "document_type": {
+                "$eq": "safety"
+            }
+        }
+
+        safety_results = search_documents(
+            embedding=query_embedding,
+            n_results=3,
+            where=general_safety_where,
+        )
+
+        safety_chunks = _convert_results(
+            safety_results
+        )
 
     # ========================================================
     # Combine Results
     # ========================================================
 
     combined_chunks = []
-
     seen_chunk_ids = set()
 
-    # Add normal results first.
+    # Add normal results first
     for chunk in normal_chunks:
-
         chunk_id = chunk.get(
             "metadata",
             {},
@@ -170,19 +174,14 @@ def retrieve_documents(
             "chunk_id"
         )
 
-        if chunk_id not in seen_chunk_ids:
+        ident = chunk_id or str(hash(chunk.get("text", "")))
 
-            combined_chunks.append(
-                chunk
-            )
+        if ident not in seen_chunk_ids:
+            combined_chunks.append(chunk)
+            seen_chunk_ids.add(ident)
 
-            seen_chunk_ids.add(
-                chunk_id
-            )
-
-    # Add explicit safety results.
+    # Add explicit safety results
     for chunk in safety_chunks:
-
         chunk_id = chunk.get(
             "metadata",
             {},
@@ -190,14 +189,10 @@ def retrieve_documents(
             "chunk_id"
         )
 
-        if chunk_id not in seen_chunk_ids:
+        ident = chunk_id or str(hash(chunk.get("text", "")))
 
-            combined_chunks.append(
-                chunk
-            )
+        if ident not in seen_chunk_ids:
+            combined_chunks.append(chunk)
+            seen_chunk_ids.add(ident)
 
-            seen_chunk_ids.add(
-                chunk_id
-            )
-
-    return combined_chunks
+    return combined_chunks

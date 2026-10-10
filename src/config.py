@@ -4,12 +4,12 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
-# Load environment variables from .env
-load_dotenv()
-
-
 # Project root
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env
+load_dotenv(BASE_DIR / ".env")
+load_dotenv()
 
 # Data directories
 DATA_DIR = BASE_DIR / "data"
@@ -85,6 +85,33 @@ MODEL_OUTPUT_COST_PER_1K = float(
 )
 
 
+# API Authentication Keys
+def get_supervisor_api_key() -> str:
+    key = os.getenv("NERI_SUPERVISOR_KEY")
+    if not key:
+        try:
+            import streamlit as st
+            key = st.secrets.get("NERI_SUPERVISOR_KEY")
+        except Exception:
+            pass
+    return (key or "").strip()
+
+
+def get_technician_api_key() -> str:
+    key = os.getenv("NERI_TECHNICIAN_KEY")
+    if not key:
+        try:
+            import streamlit as st
+            key = st.secrets.get("NERI_TECHNICIAN_KEY")
+        except Exception:
+            pass
+    return (key or "").strip()
+
+
+SUPERVISOR_API_KEY = get_supervisor_api_key()
+TECHNICIAN_API_KEY = get_technician_api_key()
+
+
 def validate_config():
     """Validate required Neri configuration."""
 
@@ -95,4 +122,49 @@ def validate_config():
             "Add it to your .env file or Streamlit secrets."
         )
 
+    super_key = get_supervisor_api_key()
+    if not super_key:
+        raise ValueError(
+            "NERI_SUPERVISOR_KEY is missing or empty. "
+            "Set it in your .env file or environment variables."
+        )
+
+    tech_key = get_technician_api_key()
+    if not tech_key:
+        raise ValueError(
+            "NERI_TECHNICIAN_KEY is missing or empty. "
+            "Set it in your .env file or environment variables."
+        )
+
+    if super_key == tech_key:
+        raise ValueError(
+            "NERI_SUPERVISOR_KEY and NERI_TECHNICIAN_KEY must not be identical."
+        )
+
     return True
+
+
+__all__ = [
+    "BASE_DIR",
+    "DATA_DIR",
+    "MANUALS_DIR",
+    "MAINTENANCE_LOGS_DIR",
+    "SAFETY_DIR",
+    "UPLOAD_DIR",
+    "OPENAI_API_KEY",
+    "OPENAI_BASE_URL",
+    "CHAT_MODEL",
+    "EMBED_MODEL",
+    "VECTOR_DIR",
+    "COLLECTION_NAME",
+    "RAG_API_URL",
+    "CACHE_TTL_SECONDS",
+    "MODEL_INPUT_COST_PER_1K",
+    "MODEL_OUTPUT_COST_PER_1K",
+    "SUPERVISOR_API_KEY",
+    "TECHNICIAN_API_KEY",
+    "get_openai_api_key",
+    "get_supervisor_api_key",
+    "get_technician_api_key",
+    "validate_config",
+]
