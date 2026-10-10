@@ -747,6 +747,119 @@ The `storage/` directory contains local application databases and the ChromaDB v
 
 ---
 
+## Automated Testing Suite
+
+NERI is equipped with an automated test suite comprising **65 tests** organized across three dedicated modules to ensure system reliability, safety guardrail enforcement, and deterministic retrieval:
+
+1. **`tests/test_phase1_auth_and_safety.py` (22 tests)**:
+   - Fail-closed API authentication validation (`X-API-Key` & `Authorization: Bearer`).
+   - Role-based access control (Technician vs. Supervisor privilege boundaries).
+   - Safety guardrail escalation: automatic hazard detection, prompt refusal when safety evidence is absent, and strict citation enforcement.
+
+2. **`tests/test_phase2_retrieval_and_integrity.py` (16 tests)**:
+   - Machine ID normalization and canonical slug indexing (e.g., `CNC Mill` -> `cnc-mill`).
+   - ChromaDB vector store metadata filtering and cross-machine chunk isolation.
+   - Text extraction, chunk boundary integrity, and deduplication during document re-indexing.
+
+3. **`tests/test_rag_pipeline_and_services.py` (27 tests)**:
+   - Full RAG troubleshooting pipeline integration with deterministic mocks.
+   - Robust LLM error handling: malformed JSON recovery, empty completion fallback, and refusal formatting.
+   - Grounded context synthesis, source attribution mapping, and prompt-injection safety defenses.
+   - Atomic document deletion consistency across SQLite records and ChromaDB vector embeddings.
+
+### Running the Test Suite
+
+```bash
+# Execute the full automated test suite with short traceback
+pytest -v --tb=short
+
+# Run a specific test suite
+pytest tests/test_rag_pipeline_and_services.py -v
+```
+
+**Test Status:** 65 passed, 0 failed (100% pass rate in ~20 seconds).
+
+---
+
+## Continuous Integration & Delivery (CI/CD)
+
+NERI implements a continuous integration workflow via **GitHub Actions** (`.github/workflows/ci.yml`) to ensure every code change maintains security and functional requirements.
+
+### Workflow Stages
+
+1. **Code Integrity & Syntax Check (`lint-and-validate`)**:
+   - Automated checkout on Python 3.11.
+   - Dependency resolution and verification against `requirements.txt`.
+   - Bytecode compilation check across all modules: `python -m compileall api src app tests`.
+
+2. **Automated Unit & RAG Regression Tests (`test-suite`)**:
+   - Executes the complete 65-test suite in a clean, isolated environment.
+   - Injects mock test API keys to verify fail-closed authorization without exposing production secrets.
+   - Validates safety refusal behaviors and retrieval pipelines.
+
+3. **Load Test Harness Verification (`load-test-verification`)**:
+   - Compiles both Locust load suites and standalone runner scripts.
+   - Validates CLI argument parsing and dry-run execution (`python load_tests/run_load_test.py --help`).
+
+### Workflow Triggers
+
+- Automatic execution on `push` to `main` and `master`.
+- Pull request evaluation on `main` and `master`.
+- Manual workflow dispatch capability via GitHub Actions UI.
+
+---
+
+## Automated Load & Performance Testing
+
+NERI includes automated load-testing tooling to benchmark response times, throughput (RPS), and security enforcement under concurrent technician load.
+
+### Load Testing Tools
+
+1. **Locust Simulation (`load_tests/locustfile.py`)**:
+   - Simulates field technicians querying manuals, viewing history, and submitting diagnostic requests.
+   - Simulates monitoring probes tracking `/health` endpoints.
+   - Verifies fail-closed authentication rejection under load.
+
+2. **Standalone Runner (`load_tests/run_load_test.py`)**:
+   - Zero-external-dashboard Python benchmark harness using multi-threaded execution.
+   - Tracks response latencies and computes percentiles (**p50, p90, p95, p99**), error rates, and throughput.
+   - Enforces SLA threshold assertions for CI/CD gates.
+
+### Measured Benchmark Results
+
+Conducted against a live instance with **5 concurrent simulated technician threads** over 52 requests:
+
+| Target Endpoint | Requests | Throughput (RPS) | Avg Latency | p50 (Median) | p95 Latency | p99 Latency | Expected Result / Notes |
+|:---|:---:|:---:|:---:|:---:|:---:|:---|
+| **`GET /health`** | 17 | 1.26 req/s | 8.9 ms | 3.3 ms | 26.4 ms | 74.6 ms | 200 OK — Lightweight health check |
+| **`GET /documents`** | 10 | 0.74 req/s | 13.1 ms | 10.2 ms | 23.4 ms | 23.4 ms | 200 OK — Document catalog retrieval |
+| **`GET /history`** | 13 | 0.96 req/s | 39.4 ms | 11.0 ms | 132.7 ms | 135.8 ms | 200 OK — Session history retrieval |
+| **`GET /documents (Unauthorized)`** | 6 | 0.44 req/s | 5.5 ms | 4.8 ms | 10.1 ms | 10.1 ms | 401 Unauthorized — Instant fail-closed |
+| **`POST /query` (Live RAG)** | 6 | 0.44 req/s | 8,683.1 ms | 9,665.2 ms | 12,668.6 ms | 12,668.6 ms | 200 OK — ChromaDB retrieval + LLM inference |
+| **Total / Aggregate** | **52** | **3.84 req/s** | - | **9.22 ms** | - | - | **0.0% Failure Rate (52/52 Succeeded)** |
+
+### How to Run Load Tests
+
+```bash
+# 1. Run the standalone load benchmark (5 concurrent users, 10s duration)
+python load_tests/run_load_test.py --host http://127.0.0.1:8000 --users 5 --duration 10
+
+# 2. Run with JSON report export
+python load_tests/run_load_test.py --host http://127.0.0.1:8000 --users 5 --duration 10 --output load_tests/benchmark_results.json
+
+# 3. Run dry-run validation (no running server needed)
+python load_tests/run_load_test.py --dry-run
+
+# 4. Run headless Locust load test
+locust -f load_tests/locustfile.py --headless -u 5 -r 2 --run-time 15s --host http://127.0.0.1:8000
+
+# 5. Run Locust with interactive web UI
+locust -f load_tests/locustfile.py --host http://127.0.0.1:8000
+# Open http://localhost:8089 in your browser
+```
+
+---
+
 ## Project Information
 
 **Project Name:** Neri

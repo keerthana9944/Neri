@@ -10,3 +10,5 @@ tiktoken
 python-multipart
 requests
 Faker
+pytest
+locust

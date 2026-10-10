@@ -1,0 +1,84 @@
+{
+  "total_requests": 52,
+  "successful_requests": 52,
+  "failed_requests": 0,
+  "failure_rate_percent": 0.0,
+  "duration_seconds": 13.54,
+  "requests_per_second": 3.84,
+  "latency": {
+    "min_ms": 2.58,
+    "avg_ms": 1017.84,
+    "p50_ms": 9.22,
+    "p90_ms": 135.77,
+    "p95_ms": 9665.24,
+    "p99_ms": 10549.06,
+    "max_ms": 12668.6
+  },
+  "by_endpoint": {
+    "GET /documents": {
+      "count": 10,
+      "success": 10,
+      "failed": 0,
+      "rps": 0.74,
+      "avg_ms": 13.12,
+      "p50_ms": 10.19,
+      "p90_ms": 22.47,
+      "p95_ms": 23.42,
+      "p99_ms": 23.42,
+      "min_ms": 8.43,
+      "max_ms": 23.42
+    },
+    "GET /documents (Unauthorized Check)": {
+      "count": 6,
+      "success": 6,
+      "failed": 0,
+      "rps": 0.44,
+      "avg_ms": 5.54,
+      "p50_ms": 4.75,
+      "p90_ms": 5.19,
+      "p95_ms": 10.12,
+      "p99_ms": 10.12,
+      "min_ms": 4.02,
+      "max_ms": 10.12
+    },
+    "GET /health": {
+      "count": 17,
+      "success": 17,
+      "failed": 0,
+      "rps": 1.26,
+      "avg_ms": 8.95,
+      "p50_ms": 3.31,
+      "p90_ms": 4.75,
+      "p95_ms": 26.41,
+      "p99_ms": 74.62,
+      "min_ms": 2.58,
+      "max_ms": 74.62
+    },
+    "GET /history": {
+      "count": 13,
+      "success": 13,
+      "failed": 0,
+      "rps": 0.96,
+      "avg_ms": 39.41,
+      "p50_ms": 11.02,
+      "p90_ms": 132.69,
+      "p95_ms": 132.69,
+      "p99_ms": 135.77,
+      "min_ms": 8.69,
+      "max_ms": 135.77
+    },
+    "POST /query": {
+      "count": 6,
+      "success": 6,
+      "failed": 0,
+      "rps": 0.44,
+      "avg_ms": 8683.1,
+      "p50_ms": 9665.24,
+      "p90_ms": 10549.06,
+      "p95_ms": 12668.6,
+      "p99_ms": 12668.6,
+      "min_ms": 12.98,
+      "max_ms": 12668.6
+    }
+  }
+}
